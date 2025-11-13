@@ -26,7 +26,7 @@ export type PhoneModelId = string;
 export interface Product {
   id: ProductType | PhoneModelId;
   name: string;
-  mockup: React.FC<React.SVGProps<SVGSVGElement>>;
+  mockup: React.FC<React.SVGProps<SVGSVGElement> & { imageHref?: string }>;
   designStyle: React.CSSProperties;
 }
 

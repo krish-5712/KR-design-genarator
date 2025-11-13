@@ -8,7 +8,7 @@ import { PRODUCTS, PHONE_DATA } from './constants';
 
 const App: React.FC = () => {
   const [prompt, setPrompt] = useState<string>('A majestic lion wearing a crown, detailed vector art');
-  const [selectedProduct, setSelectedProduct] = useState<ProductType>('tshirt');
+  const [selectedProduct, setSelectedProduct] = useState<ProductType | null>(null);
   const [selectedBrand, setSelectedBrand] = useState<PhoneBrandId | null>(null);
   const [selectedModel, setSelectedModel] = useState<PhoneModelId | null>(null);
   const [isLoading, setIsLoading] = useState<boolean>(false);
@@ -32,6 +32,10 @@ const App: React.FC = () => {
       setError('Please enter a design description.');
       return;
     }
+    if (!selectedProduct) {
+      setError('Please select a product to design.');
+      return;
+    }
     if (selectedProduct === 'phone' && !selectedModel) {
       setError('Please select a phone brand and model.');
       return;
@@ -49,11 +53,12 @@ const App: React.FC = () => {
     } finally {
       setIsLoading(false);
     }
-  }, [prompt, selectedProduct, selectedModel]);
+  }, [prompt, selectedProduct, selectedBrand, selectedModel]);
 
-  const currentProduct: Product = useMemo(() => {
+  const currentProduct: Product | null = useMemo(() => {
+    if (!selectedProduct) return null;
     if (selectedProduct === 'phone' && selectedBrand && selectedModel) {
-      return PHONE_DATA[selectedBrand]?.models[selectedModel] || PRODUCTS.phone;
+      return PHONE_DATA[selectedBrand]?.models[selectedModel] || null;
     }
     return PRODUCTS[selectedProduct];
   }, [selectedProduct, selectedBrand, selectedModel]);

@@ -4,7 +4,7 @@ import { Loader } from './Loader';
 import { DownloadIcon } from './icons';
 
 interface PreviewProps {
-  product: Product;
+  product: Product | null;
   generatedImage: string | null;
   isLoading: boolean;
   error: string | null;
@@ -13,93 +13,97 @@ interface PreviewProps {
 
 export const Preview: React.FC<PreviewProps> = ({ product, generatedImage, isLoading, error, showPhonePlaceholder }) => {
   const previewRef = useRef<HTMLDivElement>(null);
-  const Mockup = product.mockup;
 
   const handleDownload = useCallback(() => {
-    if (!generatedImage) return;
+    if (!previewRef.current) return;
 
-    const canvas = document.createElement('canvas');
-    const ctx = canvas.getContext('2d');
-    if (!ctx) return;
+    const svgNode = previewRef.current.querySelector('svg');
+    if (!svgNode) return;
 
-    const mockupImage = new Image();
-    // Convert SVG component to data URL
-    const svgString = new XMLSerializer().serializeToString(document.querySelector('#mockup-svg')!);
-    const svgBlob = new Blob([svgString], {type: "image/svg+xml;charset=utf-8"});
-    mockupImage.src = URL.createObjectURL(svgBlob);
+    const svgString = new XMLSerializer().serializeToString(svgNode);
+    const svgBlob = new Blob([svgString], { type: 'image/svg+xml;charset=utf-8' });
+    const url = URL.createObjectURL(svgBlob);
 
-    const designImage = new Image();
-    designImage.crossOrigin = "anonymous";
-    designImage.src = generatedImage;
-
-    mockupImage.onload = () => {
-      designImage.onload = () => {
-        canvas.width = mockupImage.width;
-        canvas.height = mockupImage.height;
-
-        // Draw mockup
-        ctx.drawImage(mockupImage, 0, 0);
-
-        // Calculate design position and size
-        const containerWidth = mockupImage.width;
-        const containerHeight = mockupImage.height;
-        
-        const designWidth = containerWidth * (parseFloat(product.designStyle.width as string) / 100);
-        const designHeight = containerHeight * (parseFloat(product.designStyle.height as string) / 100);
-        
-        let designTop = containerHeight * (parseFloat(product.designStyle.top as string) / 100);
-        let designLeft = containerWidth * (parseFloat(product.designStyle.left as string) / 100);
-
-        if (product.designStyle.transform?.includes('translateX(-50%)')) {
-            designLeft = (containerWidth / 2) - (designWidth / 2);
-        }
-        if (product.designStyle.transform?.includes('translate(-50%, -50%)')) {
-            designLeft = (containerWidth / 2) - (designWidth / 2);
-            designTop = (containerHeight / 2) - (designHeight / 2);
-        }
-
-        ctx.drawImage(designImage, designLeft, designTop, designWidth, designHeight);
-
-        // Trigger download
-        const link = document.createElement('a');
-        link.download = `${product.name.toLowerCase().replace(' ', '-')}-design.png`;
-        link.href = canvas.toDataURL('image/png');
-        link.click();
-        URL.revokeObjectURL(mockupImage.src);
-      };
+    const img = new Image();
+    img.onload = () => {
+      const canvas = document.createElement('canvas');
+      // Use a higher resolution for better quality download
+      const scale = 3;
+      canvas.width = img.width * scale;
+      canvas.height = img.height * scale;
+      const ctx = canvas.getContext('2d');
+      if (!ctx) return;
+      
+      ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+      URL.revokeObjectURL(url);
+      
+      const link = document.createElement('a');
+      link.download = `${product?.name.toLowerCase().replace(/\s+/g, '-')}-design.png` || 'design.png';
+      link.href = canvas.toDataURL('image/png');
+      link.click();
     };
-  }, [generatedImage, product]);
+    img.onerror = (e) => {
+        console.error("Failed to load SVG image for download", e);
+        URL.revokeObjectURL(url);
+    }
+    img.src = url;
+  }, [product]);
+
+  const renderContent = () => {
+    if (isLoading) return <Loader />;
+
+    if (error) return (
+      <div className="absolute inset-0 flex items-center justify-center bg-black/50 rounded-lg">
+        <p className="text-red-400 text-center p-4">{error}</p>
+      </div>
+    );
+    
+    if (!product) return (
+        <div className="absolute inset-0 flex items-center justify-center p-4">
+            <h2 className="text-3xl md:text-4xl font-bold text-center leading-tight">
+                <span className="text-gray-700">What do you want to </span>
+                <span className="text-transparent bg-clip-text bg-gradient-to-r from-red-600 to-orange-500">create</span>
+                <span className="text-gray-700"> today?</span>
+            </h2>
+        </div>
+    );
+
+    const Mockup = product.mockup;
+
+    return (
+      <>
+        {generatedImage && !showPhonePlaceholder && product.id !== 'tshirt' && product.id !== 'bag' ? (
+             <Mockup imageHref={generatedImage} className="w-full h-full object-contain drop-shadow-lg" />
+        ) : (
+            <>
+              <div className="absolute" style={product.designStyle}>
+                {generatedImage && (
+                    <img 
+                        src={generatedImage} 
+                        alt="Generated Design" 
+                        className="w-full h-full object-contain"
+                    />
+                )}
+              </div>
+              <Mockup className="w-full h-full object-contain drop-shadow-lg" />
+            </>
+        )}
+       
+        {showPhonePlaceholder && (
+          <div className="absolute inset-0 flex items-center justify-center bg-white/80 rounded-lg">
+            <p className="text-gray-600 font-semibold">Please select a brand and model.</p>
+          </div>
+        )}
+      </>
+    );
+  }
 
   return (
     <div className="w-full md:w-2/3 lg:w-3/4 flex flex-col items-center justify-center">
-      <div ref={previewRef} className="relative w-full max-w-2xl aspect-square bg-white border border-gray-200 shadow-inner rounded-lg flex items-center justify-center p-4">
-        <Mockup id="mockup-svg" className="w-full h-full object-contain" />
-
-        {isLoading && <Loader />}
-        
-        {!isLoading && error && (
-          <div className="absolute inset-0 flex items-center justify-center bg-black/50 rounded-lg">
-            <p className="text-red-400 text-center p-4">{error}</p>
-          </div>
-        )}
-
-        {showPhonePlaceholder && !isLoading && !error && (
-            <div className="absolute inset-0 flex items-center justify-center bg-white/80 rounded-lg">
-                <p className="text-gray-600 font-semibold">Please select a brand and model.</p>
-            </div>
-        )}
-
-        {!isLoading && generatedImage && !showPhonePlaceholder && (
-          <div className="absolute overflow-hidden" style={product.designStyle}>
-            <img 
-                src={generatedImage} 
-                alt="Generated Design" 
-                className="w-full h-full object-cover"
-            />
-          </div>
-        )}
+      <div ref={previewRef} className="relative w-full max-w-2xl aspect-square bg-white border border-gray-200 shadow-inner rounded-lg flex items-center justify-center p-4 overflow-hidden">
+        {renderContent()}
       </div>
-       {generatedImage && !isLoading && !showPhonePlaceholder && (
+       {generatedImage && !isLoading && !showPhonePlaceholder && product && (
         <button
           onClick={handleDownload}
           className="mt-6 flex items-center justify-center bg-green-600 text-white font-bold py-3 px-6 rounded-lg hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-100 focus:ring-green-500 transition-all duration-200 ease-in-out"

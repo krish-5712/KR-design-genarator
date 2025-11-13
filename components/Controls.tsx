@@ -2,11 +2,12 @@ import React from 'react';
 import type { Product, ProductType, PhoneBrandId, PhoneModelId } from '../types';
 import { PRODUCTS, PHONE_DATA } from '../constants';
 import { GenerateIcon } from './icons';
+import { CustomSelect } from './CustomSelect';
 
 interface ControlsProps {
   prompt: string;
   setPrompt: (prompt: string) => void;
-  selectedProduct: ProductType;
+  selectedProduct: ProductType | null;
   setSelectedProduct: (product: ProductType) => void;
   selectedBrand: PhoneBrandId | null;
   setSelectedBrand: (brand: PhoneBrandId) => void;
@@ -28,70 +29,72 @@ export const Controls: React.FC<ControlsProps> = ({
   handleGenerate,
   isLoading,
 }) => {
-  const isGenerateDisabled = isLoading || (selectedProduct === 'phone' && !selectedModel);
+  const isGenerateDisabled = isLoading || !selectedProduct || (selectedProduct === 'phone' && !selectedModel);
+
+  const productOptions = (Object.keys(PRODUCTS) as ProductType[]).map((key) => {
+    const product = PRODUCTS[key];
+    return { value: product.id, label: product.name };
+  });
+
+  const brandOptions = (Object.keys(PHONE_DATA) as PhoneBrandId[]).map((key) => ({
+    value: key,
+    label: PHONE_DATA[key].name,
+  }));
+
+  const modelOptions = selectedBrand
+    ? Object.values(PHONE_DATA[selectedBrand].models).map((model: Product) => ({
+        value: model.id,
+        label: model.name,
+      }))
+    : [];
   
+  let stepCounter = 1;
+
   return (
     <div className="w-full md:w-1/3 lg:w-1/4 bg-white rounded-lg shadow-md p-6 flex flex-col space-y-6 self-start">
       <div>
-        <h2 className="text-lg font-semibold mb-3 text-gray-800">1. Choose Product</h2>
-        <select
+        <h2 className="text-lg font-semibold mb-3 text-gray-800">{stepCounter++}. Choose Product</h2>
+        <CustomSelect
+          options={productOptions}
           value={selectedProduct}
-          onChange={(e) => setSelectedProduct(e.target.value as ProductType)}
-          className="w-full p-3 bg-gray-50 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500 transition-colors duration-200"
-          aria-label="Select a product"
-        >
-          {(Object.keys(PRODUCTS) as ProductType[]).map((key) => {
-            const product = PRODUCTS[key];
-            return (
-              <option key={product.id} value={product.id}>
-                {product.name}
-              </option>
-            );
-          })}
-        </select>
+          onChange={(val) => setSelectedProduct(val as ProductType)}
+          placeholder="Select a product"
+          ariaLabel="Select a product"
+        />
       </div>
 
       {selectedProduct === 'phone' && (
         <>
            <div className="border-t border-gray-200 -mx-6"></div>
            <div>
-            <h2 className="text-lg font-semibold mb-3 text-gray-800">2. Select Brand</h2>
-            <select
-                value={selectedBrand ?? ''}
-                onChange={(e) => setSelectedBrand(e.target.value as PhoneBrandId)}
-                className="w-full p-3 bg-gray-50 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500 transition-colors duration-200"
-                aria-label="Select a phone brand"
-            >
-                <option value="" disabled>-- Select Brand --</option>
-                {(Object.keys(PHONE_DATA) as PhoneBrandId[]).map((key) => (
-                    <option key={key} value={key}>{PHONE_DATA[key].name}</option>
-                ))}
-            </select>
+            <h2 className="text-lg font-semibold mb-3 text-gray-800">{stepCounter++}. Select Brand</h2>
+            <CustomSelect
+              options={brandOptions}
+              value={selectedBrand}
+              onChange={(val) => setSelectedBrand(val as PhoneBrandId)}
+              placeholder="-- Select Brand --"
+              ariaLabel="Select a phone brand"
+            />
            </div>
         </>
       )}
 
       {selectedProduct === 'phone' && selectedBrand && (
          <div>
-            <h2 className="text-lg font-semibold mb-3 text-gray-800">3. Select Model</h2>
-            <select
-                value={selectedModel ?? ''}
-                onChange={(e) => setSelectedModel(e.target.value as PhoneModelId)}
-                className="w-full p-3 bg-gray-50 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500 transition-colors duration-200"
-                aria-label="Select a phone model"
-            >
-                <option value="" disabled>-- Select Model --</option>
-                {/* FIX: Explicitly type `model` as `Product` to resolve the TypeScript error where it was inferred as `unknown`. */}
-                {Object.values(PHONE_DATA[selectedBrand].models).map((model: Product) => (
-                    <option key={model.id} value={model.id}>{model.name}</option>
-                ))}
-            </select>
+            <h2 className="text-lg font-semibold mb-3 text-gray-800">{stepCounter++}. Select Model</h2>
+            <CustomSelect
+              options={modelOptions}
+              value={selectedModel}
+              onChange={(val) => setSelectedModel(val as PhoneModelId)}
+              placeholder="-- Select Model --"
+              ariaLabel="Select a phone model"
+            />
            </div>
       )}
 
 
       <div>
-        <h2 className="text-lg font-semibold mb-3 text-gray-800">{selectedProduct === 'phone' ? '4' : '2'}. Describe Your Design</h2>
+        <h2 className="text-lg font-semibold mb-3 text-gray-800">{stepCounter}. Describe Your Design</h2>
         <textarea
           value={prompt}
           onChange={(e) => setPrompt(e.target.value)}
