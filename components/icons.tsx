@@ -26,6 +26,24 @@ export const PhoneIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => (
     </svg>
 );
 
+export const IphoneIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => (
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" fill="#E2E8F0" {...props}>
+    <path d="M69,5H31A11,11,0,0,0,20,16V84a11,11,0,0,0,11,11H69a11,11,0,0,0,11-11V16A11,11,0,0,0,69,5ZM33,21a3,3,0,0,1,3-3H41a3,3,0,0,1,0,6H36A3,3,0,0,1,33,21ZM33,29a3,3,0,1,1,3,3A3,3,0,0,1,33,29Zm6-9a3,3,0,1,1,3,3A3,3,0,0,1,39,20Z"/>
+  </svg>
+);
+
+export const PixelIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => (
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" fill="#E2E8F0" {...props}>
+    <path d="M72,5H28A8,8,0,0,0,20,13V87a8,8,0,0,0,8,8H72a8,8,0,0,0,8-8V13A8,8,0,0,0,72,5ZM70,27H30a2,2,0,0,1,0-4H70a2,2,0,0,1,0,4Zm-17-7a3,3,0,1,1-3-3A3,3,0,0,1,53,20Zm-8,0a3,3,0,1,1-3-3A3,3,0,0,1,45,20Z"/>
+  </svg>
+);
+
+export const SamsungIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => (
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" fill="#E2E8F0" {...props}>
+    <path d="M72,5H28a3,3,0,0,0-3,3V92a3,3,0,0,0,3,3H72a3,3,0,0,0,3-3V8a3,3,0,0,0-3-3ZM33,18a3,3,0,1,1,3,3A3,3,0,0,1,33,18Zm0,8a3,3,0,1,1,3,3A3,3,0,0,1,33,26Zm0,8a3,3,0,1,1,3,3A3,3,0,0,1,33,34Zm24,2a2,2,0,1,1,2-2A2,2,0,0,1,57,36Z"/>
+  </svg>
+);
+
 export const GenerateIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => (
   <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" {...props}>
     <path d="M10 3.5a1.5 1.5 0 011.5 1.5.75.75 0 001.5 0A3 3 0 0010 2a3 3 0 00-3 3 .75.75 0 001.5 0A1.5 1.5 0 0110 3.5zM10 5.5a1 1 0 00-1 1v2.25a.75.75 0 001.5 0V6.5a1 1 0 00-1-1z" />

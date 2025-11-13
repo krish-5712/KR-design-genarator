@@ -1,6 +1,6 @@
 import React from 'react';
-import type { ProductType } from '../types';
-import { PRODUCTS } from '../constants';
+import type { Product, ProductType, PhoneBrandId, PhoneModelId } from '../types';
+import { PRODUCTS, PHONE_DATA } from '../constants';
 import { GenerateIcon } from './icons';
 
 interface ControlsProps {
@@ -8,6 +8,10 @@ interface ControlsProps {
   setPrompt: (prompt: string) => void;
   selectedProduct: ProductType;
   setSelectedProduct: (product: ProductType) => void;
+  selectedBrand: PhoneBrandId | null;
+  setSelectedBrand: (brand: PhoneBrandId) => void;
+  selectedModel: PhoneModelId | null;
+  setSelectedModel: (model: PhoneModelId) => void;
   handleGenerate: () => void;
   isLoading: boolean;
 }
@@ -17,9 +21,15 @@ export const Controls: React.FC<ControlsProps> = ({
   setPrompt,
   selectedProduct,
   setSelectedProduct,
+  selectedBrand,
+  setSelectedBrand,
+  selectedModel,
+  setSelectedModel,
   handleGenerate,
   isLoading,
 }) => {
+  const isGenerateDisabled = isLoading || (selectedProduct === 'phone' && !selectedModel);
+  
   return (
     <div className="w-full md:w-1/3 lg:w-1/4 bg-white rounded-lg shadow-md p-6 flex flex-col space-y-6 self-start">
       <div>
@@ -41,8 +51,47 @@ export const Controls: React.FC<ControlsProps> = ({
         </select>
       </div>
 
+      {selectedProduct === 'phone' && (
+        <>
+           <div className="border-t border-gray-200 -mx-6"></div>
+           <div>
+            <h2 className="text-lg font-semibold mb-3 text-gray-800">2. Select Brand</h2>
+            <select
+                value={selectedBrand ?? ''}
+                onChange={(e) => setSelectedBrand(e.target.value as PhoneBrandId)}
+                className="w-full p-3 bg-gray-50 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500 transition-colors duration-200"
+                aria-label="Select a phone brand"
+            >
+                <option value="" disabled>-- Select Brand --</option>
+                {(Object.keys(PHONE_DATA) as PhoneBrandId[]).map((key) => (
+                    <option key={key} value={key}>{PHONE_DATA[key].name}</option>
+                ))}
+            </select>
+           </div>
+        </>
+      )}
+
+      {selectedProduct === 'phone' && selectedBrand && (
+         <div>
+            <h2 className="text-lg font-semibold mb-3 text-gray-800">3. Select Model</h2>
+            <select
+                value={selectedModel ?? ''}
+                onChange={(e) => setSelectedModel(e.target.value as PhoneModelId)}
+                className="w-full p-3 bg-gray-50 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500 transition-colors duration-200"
+                aria-label="Select a phone model"
+            >
+                <option value="" disabled>-- Select Model --</option>
+                {/* FIX: Explicitly type `model` as `Product` to resolve the TypeScript error where it was inferred as `unknown`. */}
+                {Object.values(PHONE_DATA[selectedBrand].models).map((model: Product) => (
+                    <option key={model.id} value={model.id}>{model.name}</option>
+                ))}
+            </select>
+           </div>
+      )}
+
+
       <div>
-        <h2 className="text-lg font-semibold mb-3 text-gray-800">2. Describe Your Design</h2>
+        <h2 className="text-lg font-semibold mb-3 text-gray-800">{selectedProduct === 'phone' ? '4' : '2'}. Describe Your Design</h2>
         <textarea
           value={prompt}
           onChange={(e) => setPrompt(e.target.value)}
@@ -54,7 +103,7 @@ export const Controls: React.FC<ControlsProps> = ({
 
       <button
         onClick={handleGenerate}
-        disabled={isLoading}
+        disabled={isGenerateDisabled}
         className="w-full flex items-center justify-center bg-red-600 text-white font-bold py-3 px-4 rounded-lg hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-white focus:ring-red-500 transition-all duration-200 ease-in-out disabled:bg-red-400 disabled:cursor-not-allowed group"
       >
         {isLoading ? (

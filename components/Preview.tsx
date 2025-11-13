@@ -8,9 +8,10 @@ interface PreviewProps {
   generatedImage: string | null;
   isLoading: boolean;
   error: string | null;
+  showPhonePlaceholder: boolean;
 }
 
-export const Preview: React.FC<PreviewProps> = ({ product, generatedImage, isLoading, error }) => {
+export const Preview: React.FC<PreviewProps> = ({ product, generatedImage, isLoading, error, showPhonePlaceholder }) => {
   const previewRef = useRef<HTMLDivElement>(null);
   const Mockup = product.mockup;
 
@@ -82,17 +83,23 @@ export const Preview: React.FC<PreviewProps> = ({ product, generatedImage, isLoa
           </div>
         )}
 
-        {!isLoading && generatedImage && (
-          <div className="absolute" style={product.designStyle}>
+        {showPhonePlaceholder && !isLoading && !error && (
+            <div className="absolute inset-0 flex items-center justify-center bg-white/80 rounded-lg">
+                <p className="text-gray-600 font-semibold">Please select a brand and model.</p>
+            </div>
+        )}
+
+        {!isLoading && generatedImage && !showPhonePlaceholder && (
+          <div className="absolute overflow-hidden" style={product.designStyle}>
             <img 
                 src={generatedImage} 
                 alt="Generated Design" 
-                className="w-full h-full object-contain"
+                className="w-full h-full object-cover"
             />
           </div>
         )}
       </div>
-       {generatedImage && !isLoading && (
+       {generatedImage && !isLoading && !showPhonePlaceholder && (
         <button
           onClick={handleDownload}
           className="mt-6 flex items-center justify-center bg-green-600 text-white font-bold py-3 px-6 rounded-lg hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-100 focus:ring-green-500 transition-all duration-200 ease-in-out"

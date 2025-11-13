@@ -1,7 +1,401 @@
-import type { Product } from './types';
-import { TshirtIcon, BagIcon, PhoneIcon } from './components/icons';
+import type { Product, PhoneBrand, ProductType, PhoneBrandId } from './types';
+import { TshirtIcon, BagIcon, PhoneIcon, IphoneIcon, SamsungIcon, PixelIcon } from './components/icons';
 
-export const PRODUCTS: Record<string, Product> = {
+const genericPhoneDesignStyle = {
+  width: '84%',
+  height: '88%',
+  top: '50%',
+  left: '50%',
+  transform: 'translate(-50%, -50%)',
+  borderRadius: '4%',
+};
+
+const appleDesignStyle = {
+  width: '82%',
+  height: '85%',
+  top: '50%',
+  left: '50%',
+  transform: 'translate(-50%, -50%)',
+  borderRadius: '10%',
+};
+
+const googleDesignStyle = {
+    width: '84%',
+    height: '86%',
+    top: '50%',
+    left: '50%',
+    transform: 'translate(-50%, -50%)',
+    borderRadius: '6%',
+};
+
+export const PHONE_DATA: Record<PhoneBrandId, PhoneBrand> = {
+  apple: {
+    id: 'apple',
+    name: 'Apple',
+    models: {
+      'iphone-15-pro-max': { id: 'iphone-15-pro-max', name: 'iPhone 15 Pro Max', mockup: IphoneIcon, designStyle: appleDesignStyle },
+      'iphone-15-pro': { id: 'iphone-15-pro', name: 'iPhone 15 Pro', mockup: IphoneIcon, designStyle: appleDesignStyle },
+      'iphone-15-plus': { id: 'iphone-15-plus', name: 'iPhone 15 Plus', mockup: IphoneIcon, designStyle: appleDesignStyle },
+      'iphone-15': { id: 'iphone-15', name: 'iPhone 15', mockup: IphoneIcon, designStyle: appleDesignStyle },
+      'iphone-14-pro-max': { id: 'iphone-14-pro-max', name: 'iPhone 14 Pro Max', mockup: IphoneIcon, designStyle: appleDesignStyle },
+      'iphone-14-pro': { id: 'iphone-14-pro', name: 'iPhone 14 Pro', mockup: IphoneIcon, designStyle: appleDesignStyle },
+      'iphone-14-plus': { id: 'iphone-14-plus', name: 'iPhone 14 Plus', mockup: IphoneIcon, designStyle: appleDesignStyle },
+      'iphone-14': { id: 'iphone-14', name: 'iPhone 14', mockup: IphoneIcon, designStyle: appleDesignStyle },
+      'iphone-se-3': { id: 'iphone-se-3', name: 'iPhone SE (2022)', mockup: IphoneIcon, designStyle: appleDesignStyle },
+      'iphone-13-pro-max': { id: 'iphone-13-pro-max', name: 'iPhone 13 Pro Max', mockup: IphoneIcon, designStyle: appleDesignStyle },
+      'iphone-13-pro': { id: 'iphone-13-pro', name: 'iPhone 13 Pro', mockup: IphoneIcon, designStyle: appleDesignStyle },
+      'iphone-13': { id: 'iphone-13', name: 'iPhone 13', mockup: IphoneIcon, designStyle: appleDesignStyle },
+      'iphone-13-mini': { id: 'iphone-13-mini', name: 'iPhone 13 mini', mockup: IphoneIcon, designStyle: appleDesignStyle },
+      'iphone-12-pro-max': { id: 'iphone-12-pro-max', name: 'iPhone 12 Pro Max', mockup: IphoneIcon, designStyle: appleDesignStyle },
+      'iphone-12-pro': { id: 'iphone-12-pro', name: 'iPhone 12 Pro', mockup: IphoneIcon, designStyle: appleDesignStyle },
+      'iphone-12': { id: 'iphone-12', name: 'iPhone 12', mockup: IphoneIcon, designStyle: appleDesignStyle },
+      'iphone-12-mini': { id: 'iphone-12-mini', name: 'iPhone 12 mini', mockup: IphoneIcon, designStyle: appleDesignStyle },
+      'iphone-se-2': { id: 'iphone-se-2', name: 'iPhone SE (2020)', mockup: IphoneIcon, designStyle: appleDesignStyle },
+      'iphone-11-pro-max': { id: 'iphone-11-pro-max', name: 'iPhone 11 Pro Max', mockup: IphoneIcon, designStyle: appleDesignStyle },
+      'iphone-11-pro': { id: 'iphone-11-pro', name: 'iPhone 11 Pro', mockup: IphoneIcon, designStyle: appleDesignStyle },
+      'iphone-11': { id: 'iphone-11', name: 'iPhone 11', mockup: IphoneIcon, designStyle: appleDesignStyle },
+      'iphone-xs-max': { id: 'iphone-xs-max', name: 'iPhone XS Max', mockup: IphoneIcon, designStyle: appleDesignStyle },
+      'iphone-xs': { id: 'iphone-xs', name: 'iPhone XS', mockup: IphoneIcon, designStyle: appleDesignStyle },
+      'iphone-xr': { id: 'iphone-xr', name: 'iPhone XR', mockup: IphoneIcon, designStyle: appleDesignStyle },
+      'iphone-x': { id: 'iphone-x', name: 'iPhone X', mockup: IphoneIcon, designStyle: appleDesignStyle },
+      'iphone-8-plus': { id: 'iphone-8-plus', name: 'iPhone 8 Plus', mockup: IphoneIcon, designStyle: appleDesignStyle },
+      'iphone-8': { id: 'iphone-8', name: 'iPhone 8', mockup: IphoneIcon, designStyle: appleDesignStyle },
+      'iphone-7-plus': { id: 'iphone-7-plus', name: 'iPhone 7 Plus', mockup: IphoneIcon, designStyle: appleDesignStyle },
+      'iphone-7': { id: 'iphone-7', name: 'iPhone 7', mockup: IphoneIcon, designStyle: appleDesignStyle },
+      'iphone-se-1': { id: 'iphone-se-1', name: 'iPhone SE (2016)', mockup: IphoneIcon, designStyle: appleDesignStyle },
+      'iphone-6s-plus': { id: 'iphone-6s-plus', name: 'iPhone 6s Plus', mockup: IphoneIcon, designStyle: appleDesignStyle },
+      'iphone-6s': { id: 'iphone-6s', name: 'iPhone 6s', mockup: IphoneIcon, designStyle: appleDesignStyle },
+      'iphone-6-plus': { id: 'iphone-6-plus', name: 'iPhone 6 Plus', mockup: IphoneIcon, designStyle: appleDesignStyle },
+      'iphone-6': { id: 'iphone-6', name: 'iPhone 6', mockup: IphoneIcon, designStyle: appleDesignStyle },
+      'iphone-5s': { id: 'iphone-5s', name: 'iPhone 5s', mockup: IphoneIcon, designStyle: appleDesignStyle },
+      'iphone-5c': { id: 'iphone-5c', name: 'iPhone 5c', mockup: IphoneIcon, designStyle: appleDesignStyle },
+      'iphone-5': { id: 'iphone-5', name: 'iPhone 5', mockup: IphoneIcon, designStyle: appleDesignStyle },
+      'iphone-4s': { id: 'iphone-4s', name: 'iPhone 4S', mockup: IphoneIcon, designStyle: appleDesignStyle },
+      'iphone-4': { id: 'iphone-4', name: 'iPhone 4', mockup: IphoneIcon, designStyle: appleDesignStyle },
+      'iphone-3gs': { id: 'iphone-3gs', name: 'iPhone 3GS', mockup: IphoneIcon, designStyle: appleDesignStyle },
+      'iphone-3g': { id: 'iphone-3g', name: 'iPhone 3G', mockup: IphoneIcon, designStyle: appleDesignStyle },
+      'iphone-original': { id: 'iphone-original', name: 'iPhone (1st Gen)', mockup: IphoneIcon, designStyle: appleDesignStyle },
+    },
+  },
+  google: {
+    id: 'google',
+    name: 'Google',
+    models: {
+      'pixel-fold': { id: 'pixel-fold', name: 'Pixel Fold', mockup: PixelIcon, designStyle: googleDesignStyle },
+      'pixel-8-pro': { id: 'pixel-8-pro', name: 'Pixel 8 Pro', mockup: PixelIcon, designStyle: googleDesignStyle },
+      'pixel-8': { id: 'pixel-8', name: 'Pixel 8', mockup: PixelIcon, designStyle: googleDesignStyle },
+      'pixel-7a': { id: 'pixel-7a', name: 'Pixel 7a', mockup: PixelIcon, designStyle: googleDesignStyle },
+      'pixel-7-pro': { id: 'pixel-7-pro', name: 'Pixel 7 Pro', mockup: PixelIcon, designStyle: googleDesignStyle },
+      'pixel-7': { id: 'pixel-7', name: 'Pixel 7', mockup: PixelIcon, designStyle: googleDesignStyle },
+      'pixel-6a': { id: 'pixel-6a', name: 'Pixel 6a', mockup: PixelIcon, designStyle: googleDesignStyle },
+      'pixel-6-pro': { id: 'pixel-6-pro', name: 'Pixel 6 Pro', mockup: PixelIcon, designStyle: googleDesignStyle },
+      'pixel-6': { id: 'pixel-6', name: 'Pixel 6', mockup: PixelIcon, designStyle: googleDesignStyle },
+      'pixel-5a': { id: 'pixel-5a', name: 'Pixel 5a', mockup: PixelIcon, designStyle: googleDesignStyle },
+      'pixel-5': { id: 'pixel-5', name: 'Pixel 5', mockup: PixelIcon, designStyle: googleDesignStyle },
+      'pixel-4a-5g': { id: 'pixel-4a-5g', name: 'Pixel 4a 5G', mockup: PixelIcon, designStyle: googleDesignStyle },
+      'pixel-4a': { id: 'pixel-4a', name: 'Pixel 4a', mockup: PixelIcon, designStyle: googleDesignStyle },
+      'pixel-4-xl': { id: 'pixel-4-xl', name: 'Pixel 4 XL', mockup: PixelIcon, designStyle: googleDesignStyle },
+      'pixel-4': { id: 'pixel-4', name: 'Pixel 4', mockup: PixelIcon, designStyle: googleDesignStyle },
+      'pixel-3a-xl': { id: 'pixel-3a-xl', name: 'Pixel 3a XL', mockup: PixelIcon, designStyle: googleDesignStyle },
+      'pixel-3a': { id: 'pixel-3a', name: 'Pixel 3a', mockup: PixelIcon, designStyle: googleDesignStyle },
+      'pixel-3-xl': { id: 'pixel-3-xl', name: 'Pixel 3 XL', mockup: PixelIcon, designStyle: googleDesignStyle },
+      'pixel-3': { id: 'pixel-3', name: 'Pixel 3', mockup: PixelIcon, designStyle: googleDesignStyle },
+      'pixel-2-xl': { id: 'pixel-2-xl', name: 'Pixel 2 XL', mockup: PixelIcon, designStyle: googleDesignStyle },
+      'pixel-2': { id: 'pixel-2', name: 'Pixel 2', mockup: PixelIcon, designStyle: googleDesignStyle },
+      'pixel-xl': { id: 'pixel-xl', name: 'Pixel XL', mockup: PixelIcon, designStyle: googleDesignStyle },
+      'pixel': { id: 'pixel', name: 'Pixel', mockup: PixelIcon, designStyle: googleDesignStyle },
+    },
+  },
+  samsung: {
+    id: 'samsung',
+    name: 'Samsung',
+    models: {
+      // Z Series
+      'galaxy-z-fold-6': { id: 'galaxy-z-fold-6', name: 'Galaxy Z Fold 6', mockup: SamsungIcon, designStyle: genericPhoneDesignStyle },
+      'galaxy-z-flip-6': { id: 'galaxy-z-flip-6', name: 'Galaxy Z Flip 6', mockup: SamsungIcon, designStyle: genericPhoneDesignStyle },
+      'galaxy-z-fold-5': { id: 'galaxy-z-fold-5', name: 'Galaxy Z Fold 5', mockup: SamsungIcon, designStyle: genericPhoneDesignStyle },
+      'galaxy-z-flip-5': { id: 'galaxy-z-flip-5', name: 'Galaxy Z Flip 5', mockup: SamsungIcon, designStyle: genericPhoneDesignStyle },
+      'galaxy-z-fold-4': { id: 'galaxy-z-fold-4', name: 'Galaxy Z Fold 4', mockup: SamsungIcon, designStyle: genericPhoneDesignStyle },
+      'galaxy-z-flip-4': { id: 'galaxy-z-flip-4', name: 'Galaxy Z Flip 4', mockup: SamsungIcon, designStyle: genericPhoneDesignStyle },
+      'galaxy-z-fold-3': { id: 'galaxy-z-fold-3', name: 'Galaxy Z Fold 3', mockup: SamsungIcon, designStyle: genericPhoneDesignStyle },
+      'galaxy-z-flip-3': { id: 'galaxy-z-flip-3', name: 'Galaxy Z Flip 3', mockup: SamsungIcon, designStyle: genericPhoneDesignStyle },
+      'galaxy-z-fold-2': { id: 'galaxy-z-fold-2', name: 'Galaxy Z Fold 2', mockup: SamsungIcon, designStyle: genericPhoneDesignStyle },
+      'galaxy-z-flip': { id: 'galaxy-z-flip', name: 'Galaxy Z Flip', mockup: SamsungIcon, designStyle: genericPhoneDesignStyle },
+      'galaxy-fold': { id: 'galaxy-fold', name: 'Galaxy Fold', mockup: SamsungIcon, designStyle: genericPhoneDesignStyle },
+      // S Series
+      'galaxy-s25': { id: 'galaxy-s25', name: 'Galaxy S25', mockup: SamsungIcon, designStyle: genericPhoneDesignStyle },
+      'galaxy-s24-ultra': { id: 'galaxy-s24-ultra', name: 'Galaxy S24 Ultra', mockup: SamsungIcon, designStyle: genericPhoneDesignStyle },
+      'galaxy-s24-plus': { id: 'galaxy-s24-plus', name: 'Galaxy S24+', mockup: SamsungIcon, designStyle: genericPhoneDesignStyle },
+      'galaxy-s24': { id: 'galaxy-s24', name: 'Galaxy S24', mockup: SamsungIcon, designStyle: genericPhoneDesignStyle },
+      'galaxy-s23-ultra': { id: 'galaxy-s23-ultra', name: 'Galaxy S23 Ultra', mockup: SamsungIcon, designStyle: genericPhoneDesignStyle },
+      'galaxy-s23-plus': { id: 'galaxy-s23-plus', name: 'Galaxy S23+', mockup: SamsungIcon, designStyle: genericPhoneDesignStyle },
+      'galaxy-s23': { id: 'galaxy-s23', name: 'Galaxy S23', mockup: SamsungIcon, designStyle: genericPhoneDesignStyle },
+      'galaxy-s23-fe': { id: 'galaxy-s23-fe', name: 'Galaxy S23 FE', mockup: SamsungIcon, designStyle: genericPhoneDesignStyle },
+      'galaxy-s22-ultra': { id: 'galaxy-s22-ultra', name: 'Galaxy S22 Ultra', mockup: SamsungIcon, designStyle: genericPhoneDesignStyle },
+      'galaxy-s22-plus': { id: 'galaxy-s22-plus', name: 'Galaxy S22+', mockup: SamsungIcon, designStyle: genericPhoneDesignStyle },
+      'galaxy-s22': { id: 'galaxy-s22', name: 'Galaxy S22', mockup: SamsungIcon, designStyle: genericPhoneDesignStyle },
+      'galaxy-s21-ultra': { id: 'galaxy-s21-ultra', name: 'Galaxy S21 Ultra', mockup: SamsungIcon, designStyle: genericPhoneDesignStyle },
+      'galaxy-s21-plus': { id: 'galaxy-s21-plus', name: 'Galaxy S21+', mockup: SamsungIcon, designStyle: genericPhoneDesignStyle },
+      'galaxy-s21': { id: 'galaxy-s21', name: 'Galaxy S21', mockup: SamsungIcon, designStyle: genericPhoneDesignStyle },
+      'galaxy-s21-fe': { id: 'galaxy-s21-fe', name: 'Galaxy S21 FE', mockup: SamsungIcon, designStyle: genericPhoneDesignStyle },
+      'galaxy-s20-ultra': { id: 'galaxy-s20-ultra', name: 'Galaxy S20 Ultra', mockup: SamsungIcon, designStyle: genericPhoneDesignStyle },
+      'galaxy-s20-plus': { id: 'galaxy-s20-plus', name: 'Galaxy S20+', mockup: SamsungIcon, designStyle: genericPhoneDesignStyle },
+      'galaxy-s20': { id: 'galaxy-s20', name: 'Galaxy S20', mockup: SamsungIcon, designStyle: genericPhoneDesignStyle },
+      'galaxy-s20-fe': { id: 'galaxy-s20-fe', name: 'Galaxy S20 FE', mockup: SamsungIcon, designStyle: genericPhoneDesignStyle },
+      'galaxy-s10-plus': { id: 'galaxy-s10-plus', name: 'Galaxy S10+', mockup: SamsungIcon, designStyle: genericPhoneDesignStyle },
+      'galaxy-s10': { id: 'galaxy-s10', name: 'Galaxy S10', mockup: SamsungIcon, designStyle: genericPhoneDesignStyle },
+      'galaxy-s10e': { id: 'galaxy-s10e', name: 'Galaxy S10e', mockup: SamsungIcon, designStyle: genericPhoneDesignStyle },
+      'galaxy-s9-plus': { id: 'galaxy-s9-plus', name: 'Galaxy S9+', mockup: SamsungIcon, designStyle: genericPhoneDesignStyle },
+      'galaxy-s9': { id: 'galaxy-s9', name: 'Galaxy S9', mockup: SamsungIcon, designStyle: genericPhoneDesignStyle },
+      'galaxy-s8-plus': { id: 'galaxy-s8-plus', name: 'Galaxy S8+', mockup: SamsungIcon, designStyle: genericPhoneDesignStyle },
+      'galaxy-s8': { id: 'galaxy-s8', name: 'Galaxy S8', mockup: SamsungIcon, designStyle: genericPhoneDesignStyle },
+      'galaxy-s7-edge': { id: 'galaxy-s7-edge', name: 'Galaxy S7 Edge', mockup: SamsungIcon, designStyle: genericPhoneDesignStyle },
+      'galaxy-s7': { id: 'galaxy-s7', name: 'Galaxy S7', mockup: SamsungIcon, designStyle: genericPhoneDesignStyle },
+      'galaxy-s6': { id: 'galaxy-s6', name: 'Galaxy S6', mockup: SamsungIcon, designStyle: genericPhoneDesignStyle },
+      'galaxy-s5': { id: 'galaxy-s5', name: 'Galaxy S5', mockup: SamsungIcon, designStyle: genericPhoneDesignStyle },
+      'galaxy-s4': { id: 'galaxy-s4', name: 'Galaxy S4', mockup: SamsungIcon, designStyle: genericPhoneDesignStyle },
+      'galaxy-s3': { id: 'galaxy-s3', name: 'Galaxy S3', mockup: SamsungIcon, designStyle: genericPhoneDesignStyle },
+      'galaxy-s2': { id: 'galaxy-s2', name: 'Galaxy S2', mockup: SamsungIcon, designStyle: genericPhoneDesignStyle },
+      'galaxy-s': { id: 'galaxy-s', name: 'Galaxy S', mockup: SamsungIcon, designStyle: genericPhoneDesignStyle },
+      // Note Series
+      'galaxy-note-20-ultra': { id: 'galaxy-note-20-ultra', name: 'Galaxy Note 20 Ultra', mockup: SamsungIcon, designStyle: genericPhoneDesignStyle },
+      'galaxy-note-20': { id: 'galaxy-note-20', name: 'Galaxy Note 20', mockup: SamsungIcon, designStyle: genericPhoneDesignStyle },
+      'galaxy-note-10-plus': { id: 'galaxy-note-10-plus', name: 'Galaxy Note 10+', mockup: SamsungIcon, designStyle: genericPhoneDesignStyle },
+      'galaxy-note-10': { id: 'galaxy-note-10', name: 'Galaxy Note 10', mockup: SamsungIcon, designStyle: genericPhoneDesignStyle },
+      'galaxy-note-9': { id: 'galaxy-note-9', name: 'Galaxy Note 9', mockup: SamsungIcon, designStyle: genericPhoneDesignStyle },
+      'galaxy-note-8': { id: 'galaxy-note-8', name: 'Galaxy Note 8', mockup: SamsungIcon, designStyle: genericPhoneDesignStyle },
+      'galaxy-note-7': { id: 'galaxy-note-7', name: 'Galaxy Note 7', mockup: SamsungIcon, designStyle: genericPhoneDesignStyle },
+      'galaxy-note-5': { id: 'galaxy-note-5', name: 'Galaxy Note 5', mockup: SamsungIcon, designStyle: genericPhoneDesignStyle },
+      'galaxy-note-4': { id: 'galaxy-note-4', name: 'Galaxy Note 4', mockup: SamsungIcon, designStyle: genericPhoneDesignStyle },
+      'galaxy-note-3': { id: 'galaxy-note-3', name: 'Galaxy Note 3', mockup: SamsungIcon, designStyle: genericPhoneDesignStyle },
+      'galaxy-note-2': { id: 'galaxy-note-2', name: 'Galaxy Note 2', mockup: SamsungIcon, designStyle: genericPhoneDesignStyle },
+      'galaxy-note': { id: 'galaxy-note', name: 'Galaxy Note', mockup: SamsungIcon, designStyle: genericPhoneDesignStyle },
+      // A Series
+      'galaxy-a55': { id: 'galaxy-a55', name: 'Galaxy A55', mockup: SamsungIcon, designStyle: genericPhoneDesignStyle },
+      'galaxy-a35': { id: 'galaxy-a35', name: 'Galaxy A35', mockup: SamsungIcon, designStyle: genericPhoneDesignStyle },
+      'galaxy-a54': { id: 'galaxy-a54', name: 'Galaxy A54', mockup: SamsungIcon, designStyle: genericPhoneDesignStyle },
+      'galaxy-a34': { id: 'galaxy-a34', name: 'Galaxy A34', mockup: SamsungIcon, designStyle: genericPhoneDesignStyle },
+      'galaxy-a73': { id: 'galaxy-a73', name: 'Galaxy A73', mockup: SamsungIcon, designStyle: genericPhoneDesignStyle },
+      'galaxy-a53': { id: 'galaxy-a53', name: 'Galaxy A53', mockup: SamsungIcon, designStyle: genericPhoneDesignStyle },
+      'galaxy-a33': { id: 'galaxy-a33', name: 'Galaxy A33', mockup: SamsungIcon, designStyle: genericPhoneDesignStyle },
+      'galaxy-a52s': { id: 'galaxy-a52s', name: 'Galaxy A52s', mockup: SamsungIcon, designStyle: genericPhoneDesignStyle },
+      'galaxy-a72': { id: 'galaxy-a72', name: 'Galaxy A72', mockup: SamsungIcon, designStyle: genericPhoneDesignStyle },
+      'galaxy-a52': { id: 'galaxy-a52', name: 'Galaxy A52', mockup: SamsungIcon, designStyle: genericPhoneDesignStyle },
+      'galaxy-a71': { id: 'galaxy-a71', name: 'Galaxy A71', mockup: SamsungIcon, designStyle: genericPhoneDesignStyle },
+      'galaxy-a51': { id: 'galaxy-a51', name: 'Galaxy A51', mockup: SamsungIcon, designStyle: genericPhoneDesignStyle },
+      'galaxy-a50': { id: 'galaxy-a50', name: 'Galaxy A50', mockup: SamsungIcon, designStyle: genericPhoneDesignStyle },
+      // M Series
+      'galaxy-m55': { id: 'galaxy-m55', name: 'Galaxy M55', mockup: SamsungIcon, designStyle: genericPhoneDesignStyle },
+      'galaxy-m53': { id: 'galaxy-m53', name: 'Galaxy M53', mockup: SamsungIcon, designStyle: genericPhoneDesignStyle },
+      'galaxy-m33': { id: 'galaxy-m33', name: 'Galaxy M33', mockup: SamsungIcon, designStyle: genericPhoneDesignStyle },
+      'galaxy-m52': { id: 'galaxy-m52', name: 'Galaxy M52', mockup: SamsungIcon, designStyle: genericPhoneDesignStyle },
+      'galaxy-m32': { id: 'galaxy-m32', name: 'Galaxy M32', mockup: SamsungIcon, designStyle: genericPhoneDesignStyle },
+      // J Series
+      'galaxy-j7-pro': { id: 'galaxy-j7-pro', name: 'Galaxy J7 Pro', mockup: SamsungIcon, designStyle: genericPhoneDesignStyle },
+      'galaxy-j7-prime': { id: 'galaxy-j7-prime', name: 'Galaxy J7 Prime', mockup: SamsungIcon, designStyle: genericPhoneDesignStyle },
+      'galaxy-j5-prime': { id: 'galaxy-j5-prime', name: 'Galaxy J5 Prime', mockup: SamsungIcon, designStyle: genericPhoneDesignStyle },
+    },
+  },
+  xiaomi: {
+    id: 'xiaomi',
+    name: 'Xiaomi',
+    models: {
+      // Xiaomi Series
+      'xiaomi-14-ultra': { id: 'xiaomi-14-ultra', name: 'Xiaomi 14 Ultra', mockup: PhoneIcon, designStyle: genericPhoneDesignStyle },
+      'xiaomi-14': { id: 'xiaomi-14', name: 'Xiaomi 14', mockup: PhoneIcon, designStyle: genericPhoneDesignStyle },
+      'xiaomi-13-ultra': { id: 'xiaomi-13-ultra', name: 'Xiaomi 13 Ultra', mockup: PhoneIcon, designStyle: genericPhoneDesignStyle },
+      'xiaomi-13-pro': { id: 'xiaomi-13-pro', name: 'Xiaomi 13 Pro', mockup: PhoneIcon, designStyle: genericPhoneDesignStyle },
+      'xiaomi-13': { id: 'xiaomi-13', name: 'Xiaomi 13', mockup: PhoneIcon, designStyle: genericPhoneDesignStyle },
+      'xiaomi-12s-ultra': { id: 'xiaomi-12s-ultra', name: 'Xiaomi 12S Ultra', mockup: PhoneIcon, designStyle: genericPhoneDesignStyle },
+      'xiaomi-12-pro': { id: 'xiaomi-12-pro', name: 'Xiaomi 12 Pro', mockup: PhoneIcon, designStyle: genericPhoneDesignStyle },
+      'xiaomi-12': { id: 'xiaomi-12', name: 'Xiaomi 12', mockup: PhoneIcon, designStyle: genericPhoneDesignStyle },
+      'mi-11-ultra': { id: 'mi-11-ultra', name: 'Mi 11 Ultra', mockup: PhoneIcon, designStyle: genericPhoneDesignStyle },
+      'mi-11': { id: 'mi-11', name: 'Mi 11', mockup: PhoneIcon, designStyle: genericPhoneDesignStyle },
+      'mi-10-pro': { id: 'mi-10-pro', name: 'Mi 10 Pro', mockup: PhoneIcon, designStyle: genericPhoneDesignStyle },
+      'mi-10': { id: 'mi-10', name: 'Mi 10', mockup: PhoneIcon, designStyle: genericPhoneDesignStyle },
+      'mi-9': { id: 'mi-9', name: 'Mi 9', mockup: PhoneIcon, designStyle: genericPhoneDesignStyle },
+      'mi-8': { id: 'mi-8', name: 'Mi 8', mockup: PhoneIcon, designStyle: genericPhoneDesignStyle },
+      'mi-mix-4': { id: 'mi-mix-4', name: 'Mi Mix 4', mockup: PhoneIcon, designStyle: genericPhoneDesignStyle },
+      'mi-mix-fold': { id: 'mi-mix-fold', name: 'Mi Mix Fold', mockup: PhoneIcon, designStyle: genericPhoneDesignStyle },
+      // Redmi Series
+      'redmi-note-13-pro-plus': { id: 'redmi-note-13-pro-plus', name: 'Redmi Note 13 Pro+', mockup: PhoneIcon, designStyle: genericPhoneDesignStyle },
+      'redmi-note-13-pro': { id: 'redmi-note-13-pro', name: 'Redmi Note 13 Pro', mockup: PhoneIcon, designStyle: genericPhoneDesignStyle },
+      'redmi-note-12-pro': { id: 'redmi-note-12-pro', name: 'Redmi Note 12 Pro', mockup: PhoneIcon, designStyle: genericPhoneDesignStyle },
+      'redmi-note-11-pro': { id: 'redmi-note-11-pro', name: 'Redmi Note 11 Pro', mockup: PhoneIcon, designStyle: genericPhoneDesignStyle },
+      'redmi-note-10-pro': { id: 'redmi-note-10-pro', name: 'Redmi Note 10 Pro', mockup: PhoneIcon, designStyle: genericPhoneDesignStyle },
+      'redmi-k70-pro': { id: 'redmi-k70-pro', name: 'Redmi K70 Pro', mockup: PhoneIcon, designStyle: genericPhoneDesignStyle },
+      'redmi-k60-pro': { id: 'redmi-k60-pro', name: 'Redmi K60 Pro', mockup: PhoneIcon, designStyle: genericPhoneDesignStyle },
+      'redmi-k50-pro': { id: 'redmi-k50-pro', name: 'Redmi K50 Pro', mockup: PhoneIcon, designStyle: genericPhoneDesignStyle },
+      'redmi-13c': { id: 'redmi-13c', name: 'Redmi 13C', mockup: PhoneIcon, designStyle: genericPhoneDesignStyle },
+      'redmi-12': { id: 'redmi-12', name: 'Redmi 12', mockup: PhoneIcon, designStyle: genericPhoneDesignStyle },
+      'redmi-10': { id: 'redmi-10', name: 'Redmi 10', mockup: PhoneIcon, designStyle: genericPhoneDesignStyle },
+      // POCO Series
+      'poco-f6-pro': { id: 'poco-f6-pro', name: 'Poco F6 Pro', mockup: PhoneIcon, designStyle: genericPhoneDesignStyle },
+      'poco-f5-pro': { id: 'poco-f5-pro', name: 'Poco F5 Pro', mockup: PhoneIcon, designStyle: genericPhoneDesignStyle },
+      'poco-f4-gt': { id: 'poco-f4-gt', name: 'Poco F4 GT', mockup: PhoneIcon, designStyle: genericPhoneDesignStyle },
+      'poco-x6-pro': { id: 'poco-x6-pro', name: 'Poco X6 Pro', mockup: PhoneIcon, designStyle: genericPhoneDesignStyle },
+      'poco-x5-pro': { id: 'poco-x5-pro', name: 'Poco X5 Pro', mockup: PhoneIcon, designStyle: genericPhoneDesignStyle },
+      'poco-m6-pro': { id: 'poco-m6-pro', name: 'Poco M6 Pro', mockup: PhoneIcon, designStyle: genericPhoneDesignStyle },
+    }
+  },
+  vivo: {
+    id: 'vivo',
+    name: 'Vivo',
+    models: {
+      'vivo-x100-pro': { id: 'vivo-x100-pro', name: 'Vivo X100 Pro', mockup: PhoneIcon, designStyle: genericPhoneDesignStyle },
+      'vivo-x90-pro': { id: 'vivo-x90-pro', name: 'Vivo X90 Pro', mockup: PhoneIcon, designStyle: genericPhoneDesignStyle },
+      'vivo-x80-pro': { id: 'vivo-x80-pro', name: 'Vivo X80 Pro', mockup: PhoneIcon, designStyle: genericPhoneDesignStyle },
+      'vivo-v30-pro': { id: 'vivo-v30-pro', name: 'Vivo V30 Pro', mockup: PhoneIcon, designStyle: genericPhoneDesignStyle },
+      'vivo-v29-pro': { id: 'vivo-v29-pro', name: 'Vivo V29 Pro', mockup: PhoneIcon, designStyle: genericPhoneDesignStyle },
+      'vivo-v27-pro': { id: 'vivo-v27-pro', name: 'Vivo V27 Pro', mockup: PhoneIcon, designStyle: genericPhoneDesignStyle },
+      'vivo-t3': { id: 'vivo-t3', name: 'Vivo T3', mockup: PhoneIcon, designStyle: genericPhoneDesignStyle },
+      'vivo-t2-pro': { id: 'vivo-t2-pro', name: 'Vivo T2 Pro', mockup: PhoneIcon, designStyle: genericPhoneDesignStyle },
+      'vivo-y200': { id: 'vivo-y200', name: 'Vivo Y200', mockup: PhoneIcon, designStyle: genericPhoneDesignStyle },
+    }
+  },
+  oppo: {
+    id: 'oppo',
+    name: 'Oppo',
+    models: {
+      'oppo-find-x7-ultra': { id: 'oppo-find-x7-ultra', name: 'Oppo Find X7 Ultra', mockup: PhoneIcon, designStyle: genericPhoneDesignStyle },
+      'oppo-find-x6-pro': { id: 'oppo-find-x6-pro', name: 'Oppo Find X6 Pro', mockup: PhoneIcon, designStyle: genericPhoneDesignStyle },
+      'oppo-find-n3-flip': { id: 'oppo-find-n3-flip', name: 'Oppo Find N3 Flip', mockup: PhoneIcon, designStyle: genericPhoneDesignStyle },
+      'oppo-reno-11-pro': { id: 'oppo-reno-11-pro', name: 'Oppo Reno 11 Pro', mockup: PhoneIcon, designStyle: genericPhoneDesignStyle },
+      'oppo-reno-10-pro': { id: 'oppo-reno-10-pro', name: 'Oppo Reno 10 Pro', mockup: PhoneIcon, designStyle: genericPhoneDesignStyle },
+      'oppo-f25-pro': { id: 'oppo-f25-pro', name: 'Oppo F25 Pro', mockup: PhoneIcon, designStyle: genericPhoneDesignStyle },
+      'oppo-a79': { id: 'oppo-a79', name: 'Oppo A79', mockup: PhoneIcon, designStyle: genericPhoneDesignStyle },
+      'oppo-a59': { id: 'oppo-a59', name: 'Oppo A59', mockup: PhoneIcon, designStyle: genericPhoneDesignStyle },
+    }
+  },
+  realme: {
+    id: 'realme',
+    name: 'Realme',
+    models: {
+      'realme-gt-6': { id: 'realme-gt-6', name: 'Realme GT 6', mockup: PhoneIcon, designStyle: genericPhoneDesignStyle },
+      'realme-gt-5-pro': { id: 'realme-gt-5-pro', name: 'Realme GT 5 Pro', mockup: PhoneIcon, designStyle: genericPhoneDesignStyle },
+      'realme-12-pro-plus': { id: 'realme-12-pro-plus', name: 'Realme 12 Pro+', mockup: PhoneIcon, designStyle: genericPhoneDesignStyle },
+      'realme-11-pro-plus': { id: 'realme-11-pro-plus', name: 'Realme 11 Pro+', mockup: PhoneIcon, designStyle: genericPhoneDesignStyle },
+      'realme-narzo-70-pro': { id: 'realme-narzo-70-pro', name: 'Realme Narzo 70 Pro', mockup: PhoneIcon, designStyle: genericPhoneDesignStyle },
+      'realme-narzo-60-pro': { id: 'realme-narzo-60-pro', name: 'Realme Narzo 60 Pro', mockup: PhoneIcon, designStyle: genericPhoneDesignStyle },
+      'realme-c67': { id: 'realme-c67', name: 'Realme C67', mockup: PhoneIcon, designStyle: genericPhoneDesignStyle },
+    }
+  },
+  oneplus: {
+    id: 'oneplus',
+    name: 'OnePlus',
+    models: {
+      'oneplus-12': { id: 'oneplus-12', name: 'OnePlus 12', mockup: PhoneIcon, designStyle: genericPhoneDesignStyle },
+      'oneplus-11': { id: 'oneplus-11', name: 'OnePlus 11', mockup: PhoneIcon, designStyle: genericPhoneDesignStyle },
+      'oneplus-10-pro': { id: 'oneplus-10-pro', name: 'OnePlus 10 Pro', mockup: PhoneIcon, designStyle: genericPhoneDesignStyle },
+      'oneplus-9-pro': { id: 'oneplus-9-pro', name: 'OnePlus 9 Pro', mockup: PhoneIcon, designStyle: genericPhoneDesignStyle },
+      'oneplus-8t': { id: 'oneplus-8t', name: 'OnePlus 8T', mockup: PhoneIcon, designStyle: genericPhoneDesignStyle },
+      'oneplus-7t-pro': { id: 'oneplus-7t-pro', name: 'OnePlus 7T Pro', mockup: PhoneIcon, designStyle: genericPhoneDesignStyle },
+      'oneplus-open': { id: 'oneplus-open', name: 'OnePlus Open', mockup: PhoneIcon, designStyle: genericPhoneDesignStyle },
+      'oneplus-nord-ce-4': { id: 'oneplus-nord-ce-4', name: 'OnePlus Nord CE 4', mockup: PhoneIcon, designStyle: genericPhoneDesignStyle },
+      'oneplus-nord-3': { id: 'oneplus-nord-3', name: 'OnePlus Nord 3', mockup: PhoneIcon, designStyle: genericPhoneDesignStyle },
+    }
+  },
+  motorola: {
+    id: 'motorola',
+    name: 'Motorola',
+    models: {
+      'motorola-razr-40-ultra': { id: 'motorola-razr-40-ultra', name: 'Motorola Razr 40 Ultra', mockup: PhoneIcon, designStyle: genericPhoneDesignStyle },
+      'motorola-edge-50-pro': { id: 'motorola-edge-50-pro', name: 'Motorola Edge 50 Pro', mockup: PhoneIcon, designStyle: genericPhoneDesignStyle },
+      'motorola-edge-40-neo': { id: 'motorola-edge-40-neo', name: 'Motorola Edge 40 Neo', mockup: PhoneIcon, designStyle: genericPhoneDesignStyle },
+      'moto-g84': { id: 'moto-g84', name: 'Moto G84', mockup: PhoneIcon, designStyle: genericPhoneDesignStyle },
+      'moto-g54': { id: 'moto-g54', name: 'Moto G54', mockup: PhoneIcon, designStyle: genericPhoneDesignStyle },
+    }
+  },
+  infinix: {
+    id: 'infinix',
+    name: 'Infinix',
+    models: {
+      'infinix-gt-20-pro': { id: 'infinix-gt-20-pro', name: 'Infinix GT 20 Pro', mockup: PhoneIcon, designStyle: genericPhoneDesignStyle },
+      'infinix-note-40-pro': { id: 'infinix-note-40-pro', name: 'Infinix Note 40 Pro', mockup: PhoneIcon, designStyle: genericPhoneDesignStyle },
+      'infinix-zero-30': { id: 'infinix-zero-30', name: 'Infinix Zero 30', mockup: PhoneIcon, designStyle: genericPhoneDesignStyle },
+      'infinix-hot-40-pro': { id: 'infinix-hot-40-pro', name: 'Infinix Hot 40 Pro', mockup: PhoneIcon, designStyle: genericPhoneDesignStyle },
+      'infinix-smart-8': { id: 'infinix-smart-8', name: 'Infinix Smart 8', mockup: PhoneIcon, designStyle: genericPhoneDesignStyle },
+    }
+  },
+  tecno: {
+    id: 'tecno',
+    name: 'Tecno',
+    models: {
+      'tecno-phantom-v-fold': { id: 'tecno-phantom-v-fold', name: 'Tecno Phantom V Fold', mockup: PhoneIcon, designStyle: genericPhoneDesignStyle },
+      'tecno-camon-30-pro': { id: 'tecno-camon-30-pro', name: 'Tecno Camon 30 Pro', mockup: PhoneIcon, designStyle: genericPhoneDesignStyle },
+      'tecno-pova-6-pro': { id: 'tecno-pova-6-pro', name: 'Tecno Pova 6 Pro', mockup: PhoneIcon, designStyle: genericPhoneDesignStyle },
+      'tecno-spark-20-pro': { id: 'tecno-spark-20-pro', name: 'Tecno Spark 20 Pro', mockup: PhoneIcon, designStyle: genericPhoneDesignStyle },
+    }
+  },
+  nokia: {
+    id: 'nokia',
+    name: 'Nokia',
+    models: {
+      'nokia-xr21': { id: 'nokia-xr21', name: 'Nokia XR21', mockup: PhoneIcon, designStyle: genericPhoneDesignStyle },
+      'nokia-g42': { id: 'nokia-g42', name: 'Nokia G42', mockup: PhoneIcon, designStyle: genericPhoneDesignStyle },
+      'nokia-c32': { id: 'nokia-c32', name: 'Nokia C32', mockup: PhoneIcon, designStyle: genericPhoneDesignStyle },
+      'nokia-9-pureview': { id: 'nokia-9-pureview', name: 'Nokia 9 PureView', mockup: PhoneIcon, designStyle: genericPhoneDesignStyle },
+      'nokia-8-sirocco': { id: 'nokia-8-sirocco', name: 'Nokia 8 Sirocco', mockup: PhoneIcon, designStyle: genericPhoneDesignStyle },
+    }
+  },
+  iqoo: {
+    id: 'iqoo',
+    name: 'iQOO',
+    models: {
+      'iqoo-12': { id: 'iqoo-12', name: 'iQOO 12', mockup: PhoneIcon, designStyle: genericPhoneDesignStyle },
+      'iqoo-neo-9-pro': { id: 'iqoo-neo-9-pro', name: 'iQOO Neo 9 Pro', mockup: PhoneIcon, designStyle: genericPhoneDesignStyle },
+      'iqoo-z9': { id: 'iqoo-z9', name: 'iQOO Z9', mockup: PhoneIcon, designStyle: genericPhoneDesignStyle },
+      'iqoo-11': { id: 'iqoo-11', name: 'iQOO 11', mockup: PhoneIcon, designStyle: genericPhoneDesignStyle },
+      'iqoo-9t': { id: 'iqoo-9t', name: 'iQOO 9T', mockup: PhoneIcon, designStyle: genericPhoneDesignStyle },
+    }
+  },
+  lava: {
+    id: 'lava',
+    name: 'Lava',
+    models: {
+      'lava-agni-2': { id: 'lava-agni-2', name: 'Lava Agni 2', mockup: PhoneIcon, designStyle: genericPhoneDesignStyle },
+      'lava-blaze-curve': { id: 'lava-blaze-curve', name: 'Lava Blaze Curve', mockup: PhoneIcon, designStyle: genericPhoneDesignStyle },
+      'lava-storm': { id: 'lava-storm', name: 'Lava Storm', mockup: PhoneIcon, designStyle: genericPhoneDesignStyle },
+    }
+  },
+  micromax: {
+    id: 'micromax',
+    name: 'Micromax',
+    models: {
+      'micromax-in-note-2': { id: 'micromax-in-note-2', name: 'Micromax IN Note 2', mockup: PhoneIcon, designStyle: genericPhoneDesignStyle },
+      'micromax-in-2c': { id: 'micromax-in-2c', name: 'Micromax IN 2c', mockup: PhoneIcon, designStyle: genericPhoneDesignStyle },
+      'micromax-canvas-infinity': { id: 'micromax-canvas-infinity', name: 'Micromax Canvas Infinity', mockup: PhoneIcon, designStyle: genericPhoneDesignStyle },
+    }
+  },
+  karbonn: {
+    id: 'karbonn',
+    name: 'Karbonn',
+    models: {
+      'karbonn-titanium-s9-plus': { id: 'karbonn-titanium-s9-plus', name: 'Karbonn Titanium S9 Plus', mockup: PhoneIcon, designStyle: genericPhoneDesignStyle },
+      'karbonn-k9-smart-plus': { id: 'karbonn-k9-smart-plus', name: 'Karbonn K9 Smart Plus', mockup: PhoneIcon, designStyle: genericPhoneDesignStyle },
+    }
+  },
+  lyf: {
+    id: 'lyf',
+    name: 'LYF',
+    models: {
+      'lyf-earth-1': { id: 'lyf-earth-1', name: 'LYF Earth 1', mockup: PhoneIcon, designStyle: genericPhoneDesignStyle },
+      'lyf-water-1': { id: 'lyf-water-1', name: 'LYF Water 1', mockup: PhoneIcon, designStyle: genericPhoneDesignStyle },
+      'lyf-wind-1': { id: 'lyf-wind-1', name: 'LYF Wind 1', mockup: PhoneIcon, designStyle: genericPhoneDesignStyle },
+      'lyf-flame-1': { id: 'lyf-flame-1', name: 'LYF Flame 1', mockup: PhoneIcon, designStyle: genericPhoneDesignStyle },
+    }
+  },
+  celkon: {
+    id: 'celkon',
+    name: 'Celkon',
+    models: {
+      'celkon-star-4g-plus': { id: 'celkon-star-4g-plus', name: 'Celkon Star 4G+', mockup: PhoneIcon, designStyle: genericPhoneDesignStyle },
+      'celkon-millennia-ufeel': { id: 'celkon-millennia-ufeel', name: 'Celkon Millennia Ufeel', mockup: PhoneIcon, designStyle: genericPhoneDesignStyle },
+    }
+  },
+};
+
+export const PRODUCTS: Record<ProductType, Product> = {
   tshirt: {
     id: 'tshirt',
     name: 'T-Shirt',
@@ -31,11 +425,7 @@ export const PRODUCTS: Record<string, Product> = {
     name: 'Phone Cover',
     mockup: PhoneIcon,
     designStyle: {
-      width: '80%',
-      height: '80%',
-      top: '50%',
-      left: '50%',
-      transform: 'translate(-50%, -50%)',
+      display: 'none',
     },
   },
 };
