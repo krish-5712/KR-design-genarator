@@ -9,7 +9,7 @@ export const Header: React.FC = () => {
           <div className="flex items-center space-x-3">
             <LogoIcon className="h-8 w-8 text-red-600" />
             <h1 className="text-2xl font-bold tracking-tight text-gray-900">
-              Designify AI
+              KR Image Generator
             </h1>
           </div>
         </div>
