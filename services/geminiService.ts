@@ -9,6 +9,12 @@ interface GenerationOptions {
     autoEnhance: boolean;
 }
 
+interface RefineOptions {
+  style: Style;
+  aspectRatio: AspectRatio;
+  negativePrompt: string;
+}
+
 const ai = new GoogleGenAI({ apiKey: process.env.API_KEY! });
 
 const enhancePrompt = async (prompt: string): Promise<string> => {
@@ -99,7 +105,7 @@ export const generateImage = async (prompt: string, options: GenerationOptions):
   }
 };
 
-export const refineImage = async (base64Image: string, prompt: string): Promise<string> => {
+export const refineImage = async (base64Image: string, prompt: string, options?: RefineOptions): Promise<string> => {
     try {
         const match = base64Image.match(/data:(image\/.+);base64,(.+)/);
         if (!match) {
@@ -107,12 +113,22 @@ export const refineImage = async (base64Image: string, prompt: string): Promise<
         }
         const [, mimeType, data] = match;
 
+        let finalPrompt = prompt;
+        if (options) {
+            finalPrompt = `
+                Apply the following changes to the image, maintaining a ${options.style} style.
+                The final image should have an aspect ratio of approximately ${options.aspectRatio}.
+                Change description: ${prompt}.
+                ${options.negativePrompt ? `Negative Prompt (exclude these elements from the final image): ${options.negativePrompt}.` : ''}
+            `.trim();
+        }
+
         const response = await ai.models.generateContent({
             model: 'gemini-2.5-flash-image',
             contents: {
                 parts: [
                     { inlineData: { mimeType, data } },
-                    { text: prompt },
+                    { text: finalPrompt },
                 ],
             },
             config: {

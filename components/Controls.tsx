@@ -27,6 +27,8 @@ interface ControlsProps {
   handleClearImage: () => void;
   editPrompt: string;
   setEditPrompt: (prompt: string) => void;
+  credits: number;
+  handleAddCredits: () => void;
 }
 
 export const Controls: React.FC<ControlsProps> = ({
@@ -51,12 +53,17 @@ export const Controls: React.FC<ControlsProps> = ({
   handleClearImage,
   editPrompt,
   setEditPrompt,
+  credits,
+  handleAddCredits,
 }) => {
   const [showAdvanced, setShowAdvanced] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
-  const isGenerateDisabled = isLoading || (!uploadedImage && !prompt.trim()) || (!!uploadedImage && !editPrompt.trim());
-  const isRefineDisabled = isLoading || !followUpPrompt.trim();
+  const selectedStyleLabel = STYLE_OPTIONS.find(o => o.value === style)?.label;
+  const selectedAspectRatioLabel = ASPECT_RATIO_OPTIONS.find(o => o.value === aspectRatio)?.label;
+
+  const isGenerateDisabled = isLoading || credits <= 0 || (!uploadedImage && !prompt.trim()) || (!!uploadedImage && !editPrompt.trim());
+  const isRefineDisabled = isLoading || credits <= 0 || !followUpPrompt.trim();
   
   const onUploadClick = () => {
     fileInputRef.current?.click();
@@ -73,6 +80,7 @@ export const Controls: React.FC<ControlsProps> = ({
       onClick={handleGenerate}
       disabled={isGenerateDisabled}
       className="w-full flex items-center justify-center bg-red-600 text-white font-bold py-3 px-4 rounded-lg hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-white focus:ring-red-500 transition-all duration-200 ease-in-out disabled:bg-red-400 disabled:cursor-not-allowed group"
+      title={credits <= 0 ? "You are out of credits" : ""}
     >
       {isLoading ? (
         <>
@@ -91,104 +99,157 @@ export const Controls: React.FC<ControlsProps> = ({
     </button>
   );
 
+  const RefineButton = () => (
+     <button
+        onClick={handleRefine}
+        disabled={isRefineDisabled}
+        className="w-full flex items-center justify-center bg-blue-600 text-white font-bold py-3 px-4 rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-white focus:ring-blue-500 transition-all duration-200 ease-in-out disabled:bg-blue-400 disabled:cursor-not-allowed group"
+        title={credits <= 0 ? "You are out of credits" : ""}
+      >
+        {isLoading ? (
+            <>
+            <svg className="animate-spin -ml-1 mr-3 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+            </svg>
+            Refining...
+            </>
+        ) : (
+            <>
+            <SparklesIcon className="h-5 w-5 mr-2 transform group-hover:scale-110 transition-transform"/>
+            Refine Image
+            </>
+        )}
+    </button>
+  );
 
   return (
     <div className="w-full md:w-1/3 lg:w-1/4 bg-white rounded-lg shadow-md p-6 flex flex-col space-y-6 self-start">
-      {generatedImage && !uploadedImage ? (
+      {generatedImage ? (
+        // Follow-up Mode (after any image has been generated)
         <>
-          <div>
-            <h2 className="text-lg font-semibold mb-2 text-gray-800">Want to change something?</h2>
-            <p className="text-sm text-gray-600 mb-4">Describe the edits you want to make to the image.</p>
-            <textarea
-              value={followUpPrompt}
-              onChange={(e) => setFollowUpPrompt(e.target.value)}
-              placeholder="e.g., Change the crown to a party hat"
-              className="w-full h-24 p-3 bg-gray-50 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors duration-200 resize-none"
-              aria-label="Image refinement description"
-              disabled={isLoading}
-            />
-          </div>
-          <button
-            onClick={handleRefine}
-            disabled={isRefineDisabled}
-            className="w-full flex items-center justify-center bg-blue-600 text-white font-bold py-3 px-4 rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-white focus:ring-blue-500 transition-all duration-200 ease-in-out disabled:bg-blue-400 disabled:cursor-not-allowed group"
-          >
-            {isLoading ? (
-               <>
-                <svg className="animate-spin -ml-1 mr-3 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                  <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                  <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                </svg>
-                Refining...
-              </>
-            ) : (
-              <>
-                <SparklesIcon className="h-5 w-5 mr-2 transform group-hover:scale-110 transition-transform"/>
-                Refine Image
-              </>
+            {uploadedImage && (
+              <div className="pb-6 border-b border-gray-200 space-y-3">
+                <div>
+                  <h2 className="text-lg font-semibold text-gray-800">Initial Edit</h2>
+                  <p className="text-sm text-gray-500">This was your original request.</p>
+                </div>
+                <img src={uploadedImage} alt="Uploaded original" className="rounded-md object-cover w-full h-auto max-h-40" />
+                <textarea
+                  value={editPrompt}
+                  className="w-full h-24 p-3 bg-gray-100 rounded-lg border border-gray-300 resize-none text-gray-500 cursor-default"
+                  aria-label="Original image edit description"
+                  disabled
+                />
+                <div>
+                  <h3 className="text-sm font-semibold text-gray-700 mb-2">Advanced Options Used:</h3>
+                  <div className="space-y-2 text-sm text-gray-600">
+                      <div className="flex justify-between items-center bg-gray-50 p-2 rounded-md">
+                          <span className="font-medium">Style:</span>
+                          <span>{selectedStyleLabel}</span>
+                      </div>
+                      <div className="flex justify-between items-center bg-gray-50 p-2 rounded-md">
+                          <span className="font-medium">Aspect Ratio:</span>
+                          <span>{selectedAspectRatioLabel}</span>
+                      </div>
+                      {negativePrompt.trim() && (
+                          <div className="bg-gray-50 p-2 rounded-md">
+                              <p className="font-medium mb-1">Negative Prompt:</p>
+                              <p className="text-xs break-words bg-gray-100 p-1.5 rounded">{negativePrompt}</p>
+                          </div>
+                      )}
+                  </div>
+                </div>
+              </div>
             )}
-          </button>
-        </>
-      ) : uploadedImage ? (
-        <>
-          <div>
-            <h2 className="text-lg font-semibold mb-3 text-gray-800">Describe the changes you want in the given image</h2>
-            <div className="relative mb-3 group">
-              <img src={uploadedImage} alt="Uploaded preview" className="rounded-md object-cover w-full h-32" />
-              <button 
-                onClick={handleClearImage} 
-                className="absolute top-1 right-1 text-white bg-black/50 rounded-full p-1 hover:bg-black/75 transition-opacity opacity-0 group-hover:opacity-100" 
-                aria-label="Clear uploaded image">
-                <XCircleIcon className="h-6 w-6" />
-              </button>
+            <div>
+              <h2 className="text-lg font-semibold mb-2 text-gray-800">
+                {uploadedImage ? 'Want any further changes?' : 'Want to change something?'}
+              </h2>
+              <p className="text-sm text-gray-600 mb-4">Describe the edits you want to make to the new image.</p>
+              <textarea
+                value={followUpPrompt}
+                onChange={(e) => setFollowUpPrompt(e.target.value)}
+                placeholder="e.g., Change the crown to a party hat"
+                className="w-full h-24 p-3 bg-gray-50 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors duration-200 resize-none"
+                aria-label="Image refinement description"
+                disabled={isLoading}
+              />
             </div>
-            <textarea
-              value={editPrompt}
-              onChange={(e) => setEditPrompt(e.target.value)}
-              placeholder="e.g., Make the sky purple, add a dragon"
-              className="w-full h-24 p-3 bg-gray-50 rounded-lg border border-gray-300 focus:ring-2 focus:ring-red-500 focus:border-red-500 transition-colors duration-200 resize-none"
-              aria-label="Image edit description"
-              disabled={isLoading}
-            />
-          </div>
-          <GenerateButton />
+            <RefineButton />
         </>
       ) : (
+        // Initial Mode (before first generation/edit)
         <>
-          <div>
-            <h2 className="text-lg font-semibold mb-3 text-gray-800">Describe your image</h2>
-            <textarea
-              value={prompt}
-              onChange={(e) => setPrompt(e.target.value)}
-              placeholder="e.g., A cute cat astronaut floating in space"
-              className="w-full h-32 p-3 bg-gray-50 rounded-lg border border-gray-300 focus:ring-2 focus:ring-red-500 focus:border-red-500 transition-colors duration-200 resize-none"
-              aria-label="Image description"
-              disabled={isLoading}
-            />
-          </div>
-          
-          <div className="border-t border-b border-gray-200 py-4">
-            <input type="file" ref={fileInputRef} onChange={onFileChange} accept="image/*" className="hidden" aria-hidden="true" />
-            <button
-                onClick={onUploadClick}
+          {uploadedImage ? (
+             <div className="space-y-3">
+              <div className="flex justify-between items-start">
+                <h2 className="text-lg font-semibold text-gray-800">Editing Uploaded Image</h2>
+                <button 
+                  onClick={handleClearImage} 
+                  className="text-gray-400 hover:text-gray-600 transition-colors" 
+                  aria-label="Clear uploaded image">
+                  <XCircleIcon className="h-6 w-6" />
+                </button>
+              </div>
+              <p className="text-sm text-gray-600">Describe the changes you want to apply.</p>
+              
+              <img src={uploadedImage} alt="Uploaded preview" className="rounded-md object-cover w-full h-auto max-h-40" />
+              
+              <textarea
+                value={editPrompt}
+                onChange={(e) => setEditPrompt(e.target.value)}
+                placeholder="e.g., Make the sky purple, add a dragon"
+                className="w-full h-24 p-3 bg-gray-50 rounded-lg border border-gray-300 focus:ring-2 focus:ring-red-500 focus:border-red-500 transition-colors duration-200 resize-none"
+                aria-label="Image edit description"
                 disabled={isLoading}
-                className="w-full flex items-center justify-center bg-gray-200 text-gray-700 font-bold py-3 px-4 rounded-lg hover:bg-gray-300 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-400 transition-all duration-200 ease-in-out disabled:bg-gray-100 disabled:cursor-not-allowed group"
-            >
-                <UploadIcon className="h-5 w-5 mr-2"/>
-                Upload Image
-            </button>
-          </div>
-          
+              />
+            </div>
+          ) : (
+            <>
+              <div>
+                <h2 className="text-lg font-semibold mb-3 text-gray-800">Describe your image</h2>
+                <textarea
+                  value={prompt}
+                  onChange={(e) => setPrompt(e.target.value)}
+                  placeholder="e.g., A cute cat astronaut floating in space"
+                  className="w-full h-32 p-3 bg-gray-50 rounded-lg border border-gray-300 focus:ring-2 focus:ring-red-500 focus:border-red-500 transition-colors duration-200 resize-none"
+                  aria-label="Image description"
+                  disabled={isLoading}
+                />
+              </div>
+              
+              <div className="border-t border-b border-gray-200 py-4">
+                <input type="file" ref={fileInputRef} onChange={onFileChange} accept="image/*" className="hidden" aria-hidden="true" />
+                <button
+                    onClick={onUploadClick}
+                    disabled={isLoading}
+                    className="w-full flex items-center justify-center bg-gray-200 text-gray-700 font-bold py-3 px-4 rounded-lg hover:bg-gray-300 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-400 transition-all duration-200 ease-in-out disabled:bg-gray-100 disabled:cursor-not-allowed group"
+                >
+                    <UploadIcon className="h-5 w-5 mr-2"/>
+                    Upload Image
+                </button>
+              </div>
+            </>
+          )}
+
           <div className="space-y-4">
-            <ToggleSwitch label="Auto-enhance prompt" enabled={autoEnhance} onChange={setAutoEnhance} disabled={isLoading} />
+            {!uploadedImage && (
+              <ToggleSwitch 
+                label="Auto-enhance prompt" 
+                enabled={autoEnhance} 
+                onChange={setAutoEnhance} 
+                disabled={isLoading}
+              />
+            )}
             
             <div>
-                 <button onClick={() => setShowAdvanced(!showAdvanced)} className="w-full flex justify-between items-center text-left text-gray-600 font-medium py-2">
+                  <button onClick={() => setShowAdvanced(!showAdvanced)} className="w-full flex justify-between items-center text-left text-gray-600 font-medium py-2">
                     <span>Advanced Options</span>
                     <ChevronDownIcon className={`h-5 w-5 transition-transform duration-200 ${showAdvanced ? 'rotate-180' : ''}`} />
                 </button>
-                 {showAdvanced && (
-                     <div className="mt-4 space-y-4 border-t pt-4">
+                  {showAdvanced && (
+                      <div className="mt-4 space-y-4 border-t pt-4">
                         <CustomSelect
                             ariaLabel="Select art style"
                             options={STYLE_OPTIONS}
@@ -206,8 +267,8 @@ export const Controls: React.FC<ControlsProps> = ({
                             disabled={isLoading}
                         />
                         <div>
-                             <label htmlFor="negative-prompt" className="block text-sm font-medium mb-1 text-gray-700">Negative Prompt</label>
-                             <textarea
+                              <label htmlFor="negative-prompt" className="block text-sm font-medium mb-1 text-gray-700">Negative Prompt</label>
+                              <textarea
                                 id="negative-prompt"
                                 value={negativePrompt}
                                 onChange={(e) => setNegativePrompt(e.target.value)}
@@ -217,14 +278,26 @@ export const Controls: React.FC<ControlsProps> = ({
                                 disabled={isLoading}
                             />
                         </div>
-                     </div>
-                 )}
+                      </div>
+                  )}
             </div>
           </div>
-
-
+          
           <GenerateButton />
         </>
+      )}
+
+      {credits <= 0 && !isLoading && (
+        <div className="mt-4 p-4 bg-yellow-50 border border-yellow-300 rounded-lg text-center space-y-3">
+            <h3 className="font-semibold text-yellow-800">You're out of credits!</h3>
+            <p className="text-sm text-yellow-700">Please add more credits to continue generating and editing images.</p>
+            <button
+                onClick={handleAddCredits}
+                className="w-full bg-yellow-400 text-yellow-900 font-bold py-2 px-4 rounded-lg hover:bg-yellow-500 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-yellow-50 focus:ring-yellow-400 transition-colors"
+            >
+                Get 10 More Credits
+            </button>
+        </div>
       )}
     </div>
   );
