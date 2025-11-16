@@ -110,7 +110,7 @@ export const LoginPage: React.FC = () => {
                         )}
                         </button>
                     </div>
-                    <p className="text-xs text-gray-500 mt-1">For local development, this is often `localhost`.</p>
+                    <p className="text-xs text-gray-500 mt-1">For a deployed app, this will be its domain name (e.g., my-app.vercel.app).</p>
                     </div>
                 </div>
                 </div>
