@@ -1,59 +1,51 @@
 # KR Image Generator
 
-This project includes a React frontend and a simple Node.js/Express backend.
+This project is a client-side React application for generating images using the Gemini API, with a backend powered by Google Firebase for user authentication and data storage.
+
+## Firebase Setup
+
+Before running the application, you need to set up a Firebase project.
+
+1.  **Create a Firebase Project**: Go to the [Firebase Console](https://console.firebase.google.com/), create a new project, and register a new web app.
+2.  **Enable Authentication**: In your Firebase project, go to the "Authentication" section and enable the "Google" sign-in provider.
+3.  **Set up Firestore**: Go to the "Firestore Database" section and create a new database in production mode.
+4.  **Configure Security Rules**: In the Firestore "Rules" tab, update the rules to allow authenticated users to read and write their own data. A secure starting point is:
+    ```
+    rules_version = '2';
+    service cloud.firestore {
+      match /databases/{database}/documents {
+        match /users/{userId} {
+          allow read, write: if request.auth != null && request.auth.uid == userId;
+        }
+      }
+    }
+    ```
+5.  **Get Firebase Config**: In your project settings, find your web app's Firebase configuration object.
+6.  **Add Config to App**: Create a new file `src/firebaseConfig.ts` and paste your configuration object there. The file should look like this:
+
+    ```typescript
+    import { initializeApp } from "firebase/app";
+    import { getAuth } from "firebase/auth";
+    import { getFirestore } from "firebase/firestore";
+
+    // Replace with your own Firebase project configuration
+    const firebaseConfig = {
+      apiKey: "YOUR_API_KEY",
+      authDomain: "YOUR_AUTH_DOMAIN",
+      projectId: "YOUR_PROJECT_ID",
+      storageBucket: "YOUR_STORAGE_BUCKET",
+      messagingSenderId: "YOUR_MESSAGING_SENDER_ID",
+      appId: "YOUR_APP_ID"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    export const auth = getAuth(app);
+    export const db = getFirestore(app);
+    ```
 
 ## Running the Application
 
-To run this application, you **must** start both the frontend development server and the backend server in **separate terminal windows**. The frontend cannot function without the backend running.
+1.  Make sure you are in the **root directory** of the project.
+2.  Follow the standard procedure to start your frontend development server (e.g., using `npm run dev`, `vite`, or your project's specific command).
 
----
-
-### **Terminal 1: Start the Backend Server**
-
-The backend server stores user data, such as email, credits, and the number of images generated.
-
-1.  **Navigate to the `server` directory:**
-    ```bash
-    cd server
-    ```
-
-2.  **Install dependencies:**
-    ```bash
-    npm install
-    ```
-
-3.  **Start the server:**
-    ```bash
-    npm start
-    ```
-
-4.  **Confirm it's running:** Look for the confirmation message in your terminal. It should say:
-    ```
-    Backend server running at http://localhost:3001
-    Admin endpoint to view all users: http://localhost:3001/admin/users
-    ```
-    **Leave this terminal window open.** If you close it, the backend will stop, and the app will fail.
-
----
-
-### **Terminal 2: Start the Frontend**
-
-The frontend is the React application that you see and interact with in the browser.
-
-1.  Open a **new** terminal window.
-2.  Make sure you are in the **root directory** of the project (the one containing the `server` folder).
-3.  Follow the standard procedure to start your frontend development server (e.g., using `npm run dev`, `vite`, or your project's specific command).
-
----
-
-### Admin Access
-
-To view all user data, you can access the admin endpoint in your browser or with a tool like Postman/cURL, but only while the backend server is running.
-
--   **URL:** `http://localhost:3001/admin/users`
-
-This will return a JSON object containing all registered users and their details.
-
-### Data Storage
-
-The backend uses a simple JSON file (`server/db.json`) as its database. You can view or even manually edit this file to manage user data directly. The server needs to be restarted for any manual changes to be reflected.
+The application will then be accessible in your browser.
