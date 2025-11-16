@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import App from './App';
 import { LoginPage } from './components/LoginPage';
-import { onAuthStateChanged, getUserProfile, createUserProfile, deductCredits } from './services/userService';
+import { onAuthStateChanged, getUserProfile, createUserProfile, deductCredits, signOut } from './services/userService';
 import type { User } from './types';
 
 const Main: React.FC = () => {
@@ -11,34 +11,44 @@ const Main: React.FC = () => {
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(async (firebaseUser) => {
-      if (firebaseUser) {
-        let userProfile = await getUserProfile(firebaseUser.uid);
+      try {
+        if (firebaseUser) {
+          let userProfile = await getUserProfile(firebaseUser.uid);
 
-        if (!userProfile) {
-          // If profile doesn't exist, create it with initial credits
-          const newUser: User = {
-            uid: firebaseUser.uid,
-            email: firebaseUser.email,
-            displayName: firebaseUser.displayName,
-            photoURL: firebaseUser.photoURL,
+          if (!userProfile) {
+            // If profile doesn't exist, create it with initial credits
+            const newUser: User = {
+              uid: firebaseUser.uid,
+              email: firebaseUser.email,
+              displayName: firebaseUser.displayName,
+              photoURL: firebaseUser.photoURL,
+            };
+            userProfile = await createUserProfile(newUser);
+          }
+          
+          const appUser: User = {
+              uid: firebaseUser.uid,
+              email: firebaseUser.email,
+              displayName: firebaseUser.displayName,
+              photoURL: firebaseUser.photoURL,
           };
-          userProfile = await createUserProfile(newUser);
-        }
-        
-        const appUser: User = {
-            uid: firebaseUser.uid,
-            email: firebaseUser.email,
-            displayName: firebaseUser.displayName,
-            photoURL: firebaseUser.photoURL,
-        };
 
-        setUser(appUser);
-        setCredits(userProfile.credits);
-      } else {
-        setUser(null);
-        setCredits(0);
+          setUser(appUser);
+          setCredits(userProfile.credits);
+        } else {
+          setUser(null);
+          setCredits(0);
+        }
+      } catch (error) {
+          console.error("Error during authentication state change:", error);
+          // If there's an error (e.g., Firestore permissions), log the user out
+          // to prevent an inconsistent state.
+          setUser(null);
+          setCredits(0);
+          await signOut(); // Ensure a clean state
+      } finally {
+        setIsLoading(false);
       }
-      setIsLoading(false);
     });
 
     return () => unsubscribe();

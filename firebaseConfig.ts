@@ -16,6 +16,9 @@ const firebaseConfig = {
 // Initialize Firebase
 const app = initializeApp(firebaseConfig);
 
+// Export the project ID for use in other parts of the app
+export const projectId = firebaseConfig.projectId;
+
 // Export Firebase services
 export const auth = getAuth(app);
 export const db = getFirestore(app);

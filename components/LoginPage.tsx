@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { signInWithGoogle } from '../services/userService';
 import { LogoIcon, GoogleIcon, ClipboardIcon, CheckIcon } from './icons';
+import { projectId } from '../firebaseConfig';
 
 interface AuthError {
   message: string;
@@ -11,6 +12,8 @@ export const LoginPage: React.FC = () => {
   const [authError, setAuthError] = useState<AuthError | null>(null);
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [isDomainCopied, setIsDomainCopied] = useState<boolean>(false);
+
+  const firebaseSettingsUrl = `https://console.firebase.google.com/project/${projectId}/authentication/settings`;
 
   const handleCopyDomain = (domain: string) => {
     if (!domain) return;
@@ -78,14 +81,14 @@ export const LoginPage: React.FC = () => {
                 <div className="flex items-start space-x-3">
                     <div className="flex-shrink-0 h-6 w-6 flex items-center justify-center bg-red-200 text-red-800 font-bold rounded-full">1</div>
                     <p className="text-gray-700">
-                    Open your project in the <a href="https://console.firebase.google.com/" target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:underline font-medium">Firebase Console</a>.
+                    Open your project's authentication settings in the <a href={firebaseSettingsUrl} target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:underline font-medium">Firebase Console</a>.
                     </p>
                 </div>
                 <div className="flex items-start space-x-3">
                     <div className="flex-shrink-0 h-6 w-6 flex items-center justify-center bg-red-200 text-red-800 font-bold rounded-full">2</div>
                     <p className="text-gray-700">
-                    Navigate to: <br/>
-                    <code className="text-xs bg-gray-200 p-1 rounded inline-block mt-1">Authentication {'->'} Settings {'->'} Authorized domains</code>
+                    Once on that page, find the <br/>
+                    <code className="text-xs bg-gray-200 p-1 rounded inline-block mt-1">Authorized domains</code> section.
                     </p>
                 </div>
                 <div className="flex items-start space-x-3">
@@ -110,7 +113,11 @@ export const LoginPage: React.FC = () => {
                         )}
                         </button>
                     </div>
-                    <p className="text-xs text-gray-500 mt-1">For a deployed app, this will be its domain name (e.g., my-app.vercel.app).</p>
+                    <p className="text-xs text-gray-500 mt-1">
+                      {authError.domain === 'localhost' || authError.domain.startsWith('127.0.0.1')
+                          ? 'This is your local development domain.'
+                          : "Since your app is deployed, you must add its public domain to the list of authorized domains."}
+                    </p>
                     </div>
                 </div>
                 </div>
