@@ -23,6 +23,10 @@ export const signInWithGoogle = async () => {
     await signInWithPopup(auth, provider);
   } catch (error) {
     console.error("Error signing in with Google:", error);
+    // NOTE: If you receive an 'auth/unauthorized-domain' error, you need to add
+    // your application's domain to the list of authorized domains in your
+    // Firebase project's Authentication settings. See the README.md for details.
+    throw error; // Re-throw to be handled by the UI
   }
 };
 

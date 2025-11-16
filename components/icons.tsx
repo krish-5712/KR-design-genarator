@@ -71,3 +71,16 @@ export const UserIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => (
         <path fillRule="evenodd" d="M10 9a3 3 0 1 0 0-6 3 3 0 0 0 0 6Zm-7 9a7 7 0 1 1 14 0H3Z" clipRule="evenodd" />
     </svg>
 );
+
+export const ClipboardIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => (
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" {...props}>
+        <path d="M7 3.5A1.5 1.5 0 0 1 8.5 2h3A1.5 1.5 0 0 1 13 3.5v1A1.5 1.5 0 0 1 11.5 6h-3A1.5 1.5 0 0 1 7 4.5v-1Z" />
+        <path fillRule="evenodd" d="M8.5 2A2.5 2.5 0 0 0 6 4.5v1A2.5 2.5 0 0 0 8.5 8h3A2.5 2.5 0 0 0 14 5.5v-1A2.5 2.5 0 0 0 11.5 2h-3ZM5 4.5A1.5 1.5 0 0 1 6.5 3H7v1.5A1.5 1.5 0 0 1 5.5 6v8.5A1.5 1.5 0 0 0 7 16h6a1.5 1.5 0 0 0 1.5-1.5V6A1.5 1.5 0 0 1 13 4.5V3h.5A1.5 1.5 0 0 1 15 4.5v10A1.5 1.5 0 0 1 13.5 16H6.5A1.5 1.5 0 0 1 5 14.5v-10Z" clipRule="evenodd" />
+    </svg>
+);
+
+export const CheckIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => (
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" {...props}>
+        <path fillRule="evenodd" d="M16.704 4.153a.75.75 0 0 1 .143 1.052l-8 10.5a.75.75 0 0 1-1.127.075l-4.5-4.5a.75.75 0 0 1 1.06-1.06l3.894 3.893 7.48-9.817a.75.75 0 0 1 1.052-.143Z" clipRule="evenodd" />
+    </svg>
+);

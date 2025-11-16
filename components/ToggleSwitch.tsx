@@ -4,18 +4,21 @@ interface ToggleSwitchProps {
   label: string;
   enabled: boolean;
   onChange: (enabled: boolean) => void;
+  // Fix: Add optional disabled prop to handle disabled state.
+  disabled?: boolean;
 }
 
-export const ToggleSwitch: React.FC<ToggleSwitchProps> = ({ label, enabled, onChange }) => {
+export const ToggleSwitch: React.FC<ToggleSwitchProps> = ({ label, enabled, onChange, disabled = false }) => {
   return (
     <div className="flex items-center justify-between">
-      <span className="text-sm font-medium text-gray-700">{label}</span>
+      <span className={`text-sm font-medium ${disabled ? 'text-gray-400' : 'text-gray-700'}`}>{label}</span>
       <button
         type="button"
-        onClick={() => onChange(!enabled)}
+        onClick={() => !disabled && onChange(!enabled)}
+        disabled={disabled}
         className={`${
           enabled ? 'bg-red-600' : 'bg-gray-200'
-        } relative inline-flex h-6 w-11 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2`}
+        } relative inline-flex h-6 w-11 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2 disabled:bg-gray-300 disabled:cursor-not-allowed`}
         role="switch"
         aria-checked={enabled}
       >
