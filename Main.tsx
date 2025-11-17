@@ -8,9 +8,11 @@ const Main: React.FC = () => {
   const [user, setUser] = useState<User | null>(null);
   const [credits, setCredits] = useState<number>(0);
   const [isLoading, setIsLoading] = useState<boolean>(true);
+  const [authProcessError, setAuthProcessError] = useState<string | null>(null);
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(async (firebaseUser) => {
+      setAuthProcessError(null); // Clear previous errors on a new auth state change
       try {
         if (firebaseUser) {
           let userProfile = await getUserProfile(firebaseUser.uid);
@@ -41,6 +43,7 @@ const Main: React.FC = () => {
         }
       } catch (error) {
           console.error("Error during authentication state change:", error);
+          setAuthProcessError("Sign-in was successful, but we couldn't access your user profile. This is often due to Firestore security rules. Please check your Firebase project configuration, as outlined in the README file, and try again.");
           // If there's an error (e.g., Firestore permissions), log the user out
           // to prevent an inconsistent state.
           setUser(null);
@@ -74,7 +77,7 @@ const Main: React.FC = () => {
     );
   }
 
-  return user ? <App user={user} credits={credits} onGenerationComplete={handleGenerationComplete} /> : <LoginPage />;
+  return user ? <App user={user} credits={credits} onGenerationComplete={handleGenerationComplete} /> : <LoginPage authProcessError={authProcessError} />;
 };
 
 export default Main;

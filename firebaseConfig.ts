@@ -1,5 +1,6 @@
-import { initializeApp } from "firebase/app";
-import { getAuth } from "firebase/auth";
+// Fix: Use scoped packages for compatibility.
+import { initializeApp } from "@firebase/app";
+import { getAuth } from "@firebase/auth";
 import { getFirestore } from "firebase/firestore";
 
 // IMPORTANT: Replace with your own Firebase project configuration.

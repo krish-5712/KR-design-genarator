@@ -8,9 +8,8 @@ interface AuthError {
   domain?: string;
 }
 
-// Fix: Add props interface to accept authProcessError
 interface LoginPageProps {
-  authProcessError: string | null;
+  authProcessError?: string | null;
 }
 
 export const LoginPage: React.FC<LoginPageProps> = ({ authProcessError }) => {
@@ -59,8 +58,7 @@ export const LoginPage: React.FC<LoginPageProps> = ({ authProcessError }) => {
         <p className="text-gray-600 mb-8">
           Sign in to start creating stunning AI-powered images.
         </p>
-
-        {/* Fix: Render the authProcessError passed from Main component */}
+        
         {authProcessError && (
           <div className="mb-6 p-4 bg-red-50 border border-red-200 rounded-lg text-center">
             <p className="text-sm text-red-700">{authProcessError}</p>

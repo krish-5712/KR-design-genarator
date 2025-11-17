@@ -1,11 +1,12 @@
 import { auth, db } from '../firebaseConfig';
+// Fix: Use '@firebase/auth' for compatibility.
 import {
   GoogleAuthProvider,
   signInWithPopup,
   onAuthStateChanged as onFirebaseAuthStateChanged,
   signOut as firebaseSignOut,
   type User as FirebaseUser,
-} from 'firebase/auth';
+} from '@firebase/auth';
 import {
   doc,
   getDoc,
