@@ -21,14 +21,14 @@ export const Header: React.FC<HeaderProps> = ({ user, credits }) => {
           </div>
           <div className="flex items-center space-x-4">
             <div className="text-right">
-                <p className="text-sm font-medium text-gray-800">{user.displayName || 'Welcome'}</p>
+                <p className="text-sm font-medium text-gray-800">{user.displayName || user.email || 'Welcome'}</p>
                 <p className="text-xs font-semibold text-red-600">Credits: {credits}</p>
             </div>
             {user.photoURL ? (
                 <img src={user.photoURL} alt="User" className="h-10 w-10 rounded-full" />
             ) : (
                 <div className="h-10 w-10 rounded-full bg-gray-300 flex items-center justify-center text-white font-bold">
-                    {user.displayName?.charAt(0) || '?'}
+                    {user.displayName?.charAt(0) || user.email?.charAt(0)?.toUpperCase() || '?'}
                 </div>
             )}
             <button

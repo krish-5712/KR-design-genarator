@@ -1,12 +1,11 @@
 import { auth, db } from '../firebaseConfig';
-// Fix: Use '@firebase/auth' for compatibility.
 import {
   GoogleAuthProvider,
   signInWithPopup,
   onAuthStateChanged as onFirebaseAuthStateChanged,
   signOut as firebaseSignOut,
   type User as FirebaseUser,
-} from '@firebase/auth';
+} from 'firebase/auth';
 import {
   doc,
   getDoc,
@@ -18,6 +17,9 @@ import {
 import type { User } from '../types';
 
 const provider = new GoogleAuthProvider();
+// Add scopes to ensure we get profile and email info
+provider.addScope('profile');
+provider.addScope('email');
 
 export const signInWithGoogle = async () => {
   try {

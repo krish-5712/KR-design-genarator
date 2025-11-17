@@ -8,7 +8,6 @@ interface AuthError {
   domain?: string;
 }
 
-// Fix: Add props interface to accept authProcessError
 interface LoginPageProps {
   authProcessError: string | null;
 }
@@ -37,12 +36,18 @@ export const LoginPage: React.FC<LoginPageProps> = ({ authProcessError }) => {
     } catch (e: any) {
       if (e.code === 'auth/unauthorized-domain') {
         const hostname = window.location.hostname;
-        setAuthError({
-          message: "This domain is not authorized for Firebase Authentication.",
-          domain: hostname,
-        });
+        if (hostname) {
+            setAuthError({
+              message: "This domain is not authorized for Firebase Authentication.",
+              domain: hostname,
+            });
+        } else {
+            setAuthError({
+                message: "Authentication failed. This app cannot be run from a 'file://' URL. Please use a local web server (like Vite's dev server) which serves the app from 'localhost' or '127.0.0.1', and ensure that domain is authorized in your Firebase settings."
+            });
+        }
       } else {
-        setAuthError({ message: 'An unexpected error occurred during sign-in. Please try again.' });
+        setAuthError({ message: `An unexpected error occurred during sign-in: ${e.message || 'Please try again.'}` });
       }
     } finally {
         setIsLoading(false);
