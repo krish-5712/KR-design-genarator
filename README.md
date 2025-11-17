@@ -22,20 +22,34 @@ Before running the application, you need to set up a Firebase project.
     }
     ```
 6.  **Get Firebase Config**: In your project settings, find your web app's Firebase configuration object.
-7.  **Add Config to App**: Open the `src/firebaseConfig.ts` file and replace the placeholder configuration with your project's configuration object.
+7.  **Add Config to App**: Create a new file `src/firebaseConfig.ts` and paste your configuration object there. The file should look like this:
+
+    ```typescript
+    import { initializeApp } from "firebase/app";
+    import { getAuth } from "firebase/auth";
+    import { getFirestore } from "firebase/firestore";
+
+    // Replace with your own Firebase project configuration
+    const firebaseConfig = {
+      apiKey: "AIzaSyBK0XzEH7ZmcnpLIDg-pBrNzxowYwW0sjQ",
+  authDomain: "kr-image-generator-backend.firebaseapp.com",
+  projectId: "kr-image-generator-backend",
+  storageBucket: "kr-image-generator-backend.firebasestorage.app",
+  messagingSenderId: "1086560410470",
+  appId: "1:1086560410470:web:13a9dd2f0db40fa371c6a7"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    export const auth = getAuth(app);
+    export const db = getFirestore(app);
+    ```
 
 ## Running the Application
 
-1.  **Install Dependencies**: Make sure you have Node.js installed. Open your terminal in the project's root directory and run:
-    ```bash
-    npm install
-    ```
+1.  Make sure you are in the **root directory** of the project.
+2.  Follow the standard procedure to start your frontend development server (e.g., using `npm run dev`, `vite`, or your project's specific command).
 
-2.  **Start Development Server**: To run the application locally, use the following command:
-    ```bash
-    npm run dev
-    ```
-    This will start the Vite development server, and you can view your application in the browser at the URL provided (usually `http://localhost:5173`).
+The application will then be accessible in your browser.
 
 ## Troubleshooting
 
