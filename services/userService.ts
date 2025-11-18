@@ -5,6 +5,9 @@ import {
   onAuthStateChanged as onFirebaseAuthStateChanged,
   signOut as firebaseSignOut,
   type User as FirebaseUser,
+  createUserWithEmailAndPassword,
+  signInWithEmailAndPassword,
+  updateProfile,
 } from 'firebase/auth';
 import {
   doc,
@@ -32,6 +35,28 @@ export const signInWithGoogle = async () => {
     throw error; // Re-throw to be handled by the UI
   }
 };
+
+export const signUpWithEmail = async (displayName: string, email: string, password: string) => {
+    try {
+      const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+      // Update the user's profile with the display name, so it's available for Firestore profile creation
+      await updateProfile(userCredential.user, { displayName });
+      // The onAuthStateChanged listener in Main.tsx will handle creating the Firestore document.
+    } catch (error) {
+      console.error("Error signing up with email and password:", error);
+      throw error;
+    }
+};
+
+export const signInWithEmail = async (email: string, password: string) => {
+    try {
+        await signInWithEmailAndPassword(auth, email, password);
+    } catch (error) {
+        console.error("Error signing in with email and password:", error);
+        throw error;
+    }
+};
+
 
 export const signOut = async () => {
   try {
@@ -63,6 +88,18 @@ export const createUserProfile = async (user: User) => {
     };
     await setDoc(userDocRef, userProfile);
     return userProfile;
+};
+
+export const updateUserProfileOnLogin = async (uid: string, profileData: {
+  email: string | null;
+  displayName: string | null;
+  photoURL: string | null;
+}) => {
+  const userDocRef = doc(db, 'users', uid);
+  await updateDoc(userDocRef, {
+    ...profileData,
+    lastLogin: serverTimestamp(),
+  });
 };
 
 export const deductCredits = async (uid: string, amount: number) => {

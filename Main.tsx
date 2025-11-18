@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import App from './App';
 import { LoginPage } from './components/LoginPage';
-import { onAuthStateChanged, getUserProfile, createUserProfile, deductCredits, signOut } from './services/userService';
+import { onAuthStateChanged, getUserProfile, createUserProfile, deductCredits, signOut, updateUserProfileOnLogin } from './services/userService';
 import type { User } from './types';
 
 const Main: React.FC = () => {
@@ -17,26 +17,35 @@ const Main: React.FC = () => {
         if (firebaseUser) {
           let userProfile = await getUserProfile(firebaseUser.uid);
 
+          const latestAuthData = {
+            email: firebaseUser.email,
+            displayName: firebaseUser.displayName,
+            photoURL: firebaseUser.photoURL,
+          };
+
           if (!userProfile) {
             // If profile doesn't exist, create it with initial credits
             const newUser: User = {
               uid: firebaseUser.uid,
-              email: firebaseUser.email,
-              displayName: firebaseUser.displayName,
-              photoURL: firebaseUser.photoURL,
+              ...latestAuthData,
             };
             userProfile = await createUserProfile(newUser);
+          } else {
+            // If profile exists, update it with the latest auth data from the provider
+            await updateUserProfileOnLogin(firebaseUser.uid, latestAuthData);
+            // Merge the latest data into our profile object for immediate use in the UI
+            userProfile = { ...userProfile, ...latestAuthData };
           }
           
           const appUser: User = {
-              uid: firebaseUser.uid,
-              email: firebaseUser.email,
-              displayName: firebaseUser.displayName,
-              photoURL: firebaseUser.photoURL,
+              uid: userProfile.uid as string,
+              email: userProfile.email as string | null,
+              displayName: userProfile.displayName as string | null,
+              photoURL: userProfile.photoURL as string | null,
           };
 
           setUser(appUser);
-          setCredits(userProfile.credits);
+          setCredits(userProfile.credits as number);
         } else {
           setUser(null);
           setCredits(0);
