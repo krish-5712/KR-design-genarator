@@ -17,7 +17,8 @@ import {
   increment,
   serverTimestamp,
 } from 'firebase/firestore';
-import type { User } from '../types';
+// Fix: Import UserProfile to use for strong typing of Firestore user documents.
+import type { User, UserProfile } from '../types';
 
 const provider = new GoogleAuthProvider();
 // Add scopes to ensure we get profile and email info
@@ -70,13 +71,15 @@ export const onAuthStateChanged = (callback: (user: FirebaseUser | null) => void
   return onFirebaseAuthStateChanged(auth, callback);
 };
 
-export const getUserProfile = async (uid: string) => {
+// Fix: Add return type and cast the document data to ensure type safety.
+export const getUserProfile = async (uid: string): Promise<UserProfile | null> => {
   const userDocRef = doc(db, 'users', uid);
   const userDoc = await getDoc(userDocRef);
-  return userDoc.exists() ? userDoc.data() : null;
+  return userDoc.exists() ? (userDoc.data() as UserProfile) : null;
 };
 
-export const createUserProfile = async (user: User) => {
+// Fix: Add return type for consistency and type safety.
+export const createUserProfile = async (user: User): Promise<UserProfile> => {
     const userDocRef = doc(db, 'users', user.uid);
     const userProfile = {
         uid: user.uid,
@@ -87,7 +90,7 @@ export const createUserProfile = async (user: User) => {
         createdAt: serverTimestamp(),
     };
     await setDoc(userDocRef, userProfile);
-    return userProfile;
+    return userProfile as UserProfile;
 };
 
 export const updateUserProfileOnLogin = async (uid: string, profileData: {
@@ -106,7 +109,8 @@ export const deductCredits = async (uid: string, amount: number) => {
     const userDocRef = doc(db, 'users', uid);
     try {
         const userDoc = await getDoc(userDocRef);
-        if (userDoc.exists() && userDoc.data().credits >= amount) {
+        // Fix: Cast user document data to UserProfile to safely access the 'credits' property.
+        if (userDoc.exists() && (userDoc.data() as UserProfile).credits >= amount) {
             await updateDoc(userDocRef, {
                 credits: increment(-amount)
             });

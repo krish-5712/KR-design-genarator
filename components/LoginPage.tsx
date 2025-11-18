@@ -66,11 +66,13 @@ export const LoginPage: React.FC<LoginPageProps> = ({ authProcessError }) => {
     try {
       await action();
     } catch (e: any) {
-      // Ignore errors from the user closing the sign-in popup.
-      if (e.code === 'auth/popup-closed-by-user' || e.code === 'auth/cancelled-popup-request') {
-        return;
+      // Gracefully handle the user closing the popup; this is not a true error.
+      if (e.code === 'auth/popup-closed-by-user') {
+        console.log('Sign-in popup closed by user.');
+        // No error message will be shown. The finally block will reset loading state.
+        return; 
       }
-
+      
       if (e.code === 'auth/unauthorized-domain') {
         const hostname = window.location.hostname;
         setAuthError({

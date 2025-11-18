@@ -7,3 +7,10 @@ export interface User {
   displayName: string | null;
   photoURL: string | null;
 }
+
+// Fix: Add UserProfile interface to strongly type user data from Firestore.
+export interface UserProfile extends User {
+  credits: number;
+  createdAt: any; // Firestore ServerTimestamp
+  lastLogin?: any; // Firestore ServerTimestamp
+}
